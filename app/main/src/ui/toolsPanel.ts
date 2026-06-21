@@ -1,9 +1,13 @@
 import { video } from '../features/video';
 import { toggleAbLoop, abLoopLabel } from '../features/abloop';
+import { equalizer, EQ_PRESETS } from '../features/equalizer';
+import { chapters } from '../features/chapters';
 import { mpv } from '../ipc/mpv';
 import { player, whisper } from '../ipc';
 import { playerStore } from '../stores/player';
 import { videoStore, type VideoState } from '../stores/video';
+import { equalizerStore, EQ_BANDS, type EqualizerState } from '../stores/equalizer';
+import { chaptersStore, type ChaptersState } from '../stores/chapters';
 import { uiStore } from '../stores/ui';
 import { h, icon } from './dom';
 import { t } from '../i18n';
@@ -40,6 +44,91 @@ function eqSlider(
     input,
   ]);
   return { row, input };
+}
+
+function freqLabel(hz: number): string {
+  return hz >= 1000 ? `${hz / 1000}k` : String(hz);
+}
+
+function gainSlider(
+  label: string,
+  onInput: (value: number) => void,
+): { row: HTMLElement; input: HTMLInputElement } {
+  const input = h('input', {
+    type: 'range',
+    min: '-20',
+    max: '20',
+    step: '1',
+    value: '0',
+    'aria-label': label,
+  }) as HTMLInputElement;
+  input.addEventListener('input', () => onInput(Number(input.value)));
+  const row = h('label', { class: 'tool-row eq-row' }, [
+    h('span', { class: 'tool-label eq-label' }, [label]),
+    input,
+  ]);
+  return { row, input };
+}
+
+function createEqualizerSection(): HTMLElement {
+  const enable = chip(t('eq.enable'), () => void equalizer.toggle());
+  const preset = h(
+    'select',
+    { class: 'eq-preset', 'aria-label': t('eq.preset') },
+    EQ_PRESETS.map((p) => h('option', { value: p.name }, [t(`eq.preset_${p.name}`)])),
+  ) as HTMLSelectElement;
+  preset.addEventListener('change', () => void equalizer.applyPreset(preset.value));
+
+  const preamp = gainSlider(t('eq.preamp'), (v) => void equalizer.setPreamp(v));
+  const bands = EQ_BANDS.map((hz, i) =>
+    gainSlider(freqLabel(hz), (v) => void equalizer.setBand(i, v)),
+  );
+
+  const section = h('section', { class: 'tool-section' }, [
+    h('h3', { class: 'tool-title' }, [t('eq.title')]),
+    h('div', { class: 'chip-row' }, [enable, preset]),
+    preamp.row,
+    h('div', { class: 'eq-bands' }, [...bands.map((b) => b.row)]),
+  ]);
+
+  equalizerStore.subscribe((s: EqualizerState) => {
+    enable.classList.toggle('active', s.enabled);
+    if (s.preset !== 'custom') preset.value = s.preset;
+    preamp.input.value = String(s.preamp);
+    s.gains.forEach((g, i) => (bands[i].input.value = String(g)));
+  });
+  return section;
+}
+
+function createChaptersSection(): HTMLElement {
+  const list = h('div', { class: 'chapter-list' });
+  const section = h('section', { class: 'tool-section', hidden: true }, [
+    h('h3', { class: 'tool-title' }, [t('chapters.title')]),
+    h('div', { class: 'chip-row' }, [
+      chip('‹', () => void chapters.prev()),
+      chip('›', () => void chapters.next()),
+    ]),
+    list,
+  ]);
+
+  chaptersStore.subscribe((s: ChaptersState) => {
+    section.hidden = s.count < 1;
+    if (s.count > 0 && s.titles.length !== s.count) void chapters.refresh();
+    list.replaceChildren(
+      ...s.titles.map((title, i) =>
+        h(
+          'button',
+          {
+            class: `chapter-chip${i === s.current ? ' current' : ''}`,
+            type: 'button',
+            onclick: () => void chapters.goTo(i),
+          },
+          [`${i + 1}. ${title}`],
+        ),
+      ),
+    );
+  });
+  return section;
 }
 
 export function createToolsPanel(): HTMLElement {
@@ -107,6 +196,7 @@ export function createToolsPanel(): HTMLElement {
       hue.row,
       h('div', { class: 'chip-row' }, [chip(t('tools.reset'), () => void video.resetEq())]),
     ]),
+    createChaptersSection(),
     section(t('tools.audio'), [
       delayControls(
         t('tools.audio_delay'),
@@ -115,6 +205,7 @@ export function createToolsPanel(): HTMLElement {
         () => mpv.cycleAudioTrack(),
       ),
     ]),
+    createEqualizerSection(),
     section(t('subtitle.title'), [
       delayControls(
         t('tools.subtitle_delay'),

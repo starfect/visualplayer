@@ -87,8 +87,9 @@ export function mountApp(root: HTMLElement): void {
   setupDragAndDrop(stage);
   setupAutoHide(stage);
   attachGestures(stage, dim);
-  uiStore.subscribe((ui) =>
-    stage.classList.toggle('panel-open', ui.playlistOpen || ui.settingsOpen || ui.toolsOpen),
-  );
+  uiStore.subscribe((ui) => {
+    stage.classList.toggle('panel-open', ui.playlistOpen || ui.settingsOpen || ui.toolsOpen);
+    stage.classList.toggle('mini-player', ui.miniPlayer);
+  });
   root.replaceChildren(stage);
 }

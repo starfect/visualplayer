@@ -56,6 +56,8 @@ pub fn run() {
             playlist::playlist_remove,
             playlist::playlist_reorder,
             playlist::playlist_select,
+            playlist::playlist_export_m3u,
+            playlist::playlist_import_m3u,
             subtitle::subtitle_discover,
             settings::settings_get,
             settings::settings_set,

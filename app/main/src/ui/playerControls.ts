@@ -4,6 +4,7 @@ import { playerStore, type PlayerState } from '../stores/player';
 import { settingsStore } from '../stores/settings';
 import { uiStore } from '../stores/ui';
 import { playNext, playPrev } from '../controllers/playback';
+import { toggleMiniPlayer } from '../features/pip';
 import { toggleFullscreen } from './fullscreen';
 import { h, icon, iconButton, formatTime } from './dom';
 import { t } from '../i18n';
@@ -74,6 +75,7 @@ export function createControlBar(): HTMLElement {
         btn('tools.title', 'tools', toggle('toolsOpen')),
         btn('player.screenshot', 'screenshot', () => void player.screenshot()),
         btn('playlist.title', 'list', toggle('playlistOpen')),
+        btn('player.mini_player', 'pip', () => void toggleMiniPlayer()),
         btn('settings.title', 'settings', toggle('settingsOpen')),
         btn('player.fullscreen', 'fullscreen', () => void toggleFullscreen()),
       ]),

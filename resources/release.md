@@ -23,6 +23,12 @@ and touch gestures. Free and open source.
 - **VLC/PotPlayer-grade controls** — aspect ratio, rotation, zoom, deinterlace,
   color equalizer (brightness/contrast/gamma/saturation/hue), audio & subtitle
   delay, A-B repeat, frame stepping, screenshots, playback speed, media info.
+- **10-band audio equalizer** — pre-amp plus presets (Rock, Pop, Jazz, Classical,
+  Dance, Bass/Treble boost, Vocal, Soft); toggle with `e`.
+- **Chapter navigation** — jump between embedded chapters (`PageUp`/`PageDown`)
+  or pick from the list.
+- **Playlists** — open and save `.m3u`/`.m3u8` files.
+- **Mini-player** — a compact, always-on-top window (`t`).
 - **Keyboard shortcuts** — space/k play, j/l/←/→ seek, ↑/↓ volume, f fullscreen,
   `[`/`]` speed, and many more (fully listed in Settings).
 - **Touch gestures (mobile)** — swipe horizontally to seek, vertically to change

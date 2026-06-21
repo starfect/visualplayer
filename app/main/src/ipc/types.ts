@@ -96,7 +96,11 @@ export type Action =
   | 'zoom_out'
   | 'zoom_reset'
   | 'jump_start'
-  | 'jump_end';
+  | 'jump_end'
+  | 'next_chapter'
+  | 'prev_chapter'
+  | 'toggle_mini_player'
+  | 'toggle_equalizer';
 
 export interface KeyChord {
   key: string;

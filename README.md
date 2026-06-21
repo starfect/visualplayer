@@ -71,7 +71,12 @@ The control bar (auto-hides during playback, move the mouse to show it):
 - Play/pause, previous/next, seek bar with time, volume + mute, playback speed.
 - **Subtitle** button cycles subtitle tracks.
 - **Adjustments** button opens the video/audio tools panel.
-- **Screenshot**, **Playlist**, **Settings**, and **Fullscreen** buttons.
+- **Screenshot**, **Playlist**, **Mini-player**, **Settings**, and **Fullscreen** buttons.
+
+### Mini-player
+
+The **Mini-player** button (`t`) shrinks the window and keeps it **always on top**,
+so a video keeps playing in a corner while you work. Press again to restore.
 
 ## Subtitles
 
@@ -87,10 +92,21 @@ Open the **Adjustments** panel for:
 
 - **Video:** aspect ratio, rotate, zoom in/out/reset, deinterlace.
 - **Color equalizer:** brightness, contrast, gamma, saturation, hue (+ reset).
+- **Chapters:** jump between embedded chapters (`PageUp`/`PageDown`) or pick from
+  the list (shown only when the file has chapters).
 - **Audio:** track cycling and **audio delay** (`Shift+G`/`Shift+H`).
+- **10-band audio equalizer:** pre-amp + presets (Rock, Pop, Jazz, Classical,
+  Dance, Bass/Treble boost, Vocal, Soft); toggle with `e`.
 - **Subtitles:** track cycling and delay.
 - **A-B repeat:** mark A, then B to loop a segment (`r`).
 - **Media info:** resolution, codecs, frame rate, track count.
+
+## Playlists
+
+- Add files by opening or dropping them; click an item to play it, ✕ to remove.
+- **Open playlist** loads an `.m3u`/`.m3u8` file (relative paths resolve against
+  the playlist's folder; URLs are kept as-is).
+- **Save playlist** writes the current list to an extended-M3U file.
 
 ## Keyboard shortcuts
 
@@ -112,6 +128,9 @@ Open the **Adjustments** panel for:
 | Aspect / rotate | `a` / `Ctrl+R` |
 | Zoom in / out / reset | `=` / `-` / `0` |
 | Jump start / end | `Home` / `End` |
+| Previous / next chapter | `PageUp` / `PageDown` |
+| Audio equalizer | `e` |
+| Mini-player (always on top) | `t` |
 
 The full, live list is shown in **Settings → Keyboard shortcuts**.
 

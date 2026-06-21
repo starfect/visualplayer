@@ -2,7 +2,7 @@
 // mpv transport is realized through `./mpv`; the rest are Tauri commands.
 
 import { invoke } from '@tauri-apps/api/core';
-import { open } from '@tauri-apps/plugin-dialog';
+import { open, save } from '@tauri-apps/plugin-dialog';
 import { locale as osLocale } from '@tauri-apps/plugin-os';
 
 import { inTauri } from './env';
@@ -60,6 +60,8 @@ export const playlist = {
   remove: (id: number) => call<Playlist>('playlist_remove', { id }),
   reorder: (from: number, to: number) => call<Playlist>('playlist_reorder', { from, to }),
   select: (id: number) => call<Playlist>('playlist_select', { id }),
+  exportM3u: (path: string) => call<string>('playlist_export_m3u', { path }),
+  importM3u: (path: string) => call<Playlist>('playlist_import_m3u', { path }),
 };
 
 export const subtitle = {
@@ -126,6 +128,19 @@ export async function pickFolder(): Promise<string | null> {
   if (!inTauri) return null;
   const selection = await open({ multiple: false, directory: true });
   return typeof selection === 'string' ? selection : null;
+}
+
+const M3U_FILTER = [{ name: 'Playlist', extensions: ['m3u', 'm3u8'] }];
+
+export async function pickPlaylistToOpen(): Promise<string | null> {
+  if (!inTauri) return null;
+  const selection = await open({ multiple: false, directory: false, filters: M3U_FILTER });
+  return typeof selection === 'string' ? selection : null;
+}
+
+export async function pickPlaylistToSave(): Promise<string | null> {
+  if (!inTauri) return null;
+  return save({ defaultPath: 'playlist.m3u', filters: M3U_FILTER });
 }
 
 export async function detectOsLocale(): Promise<string | null> {

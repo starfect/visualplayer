@@ -40,6 +40,10 @@ pub enum Action {
     ZoomReset,
     JumpStart,
     JumpEnd,
+    NextChapter,
+    PrevChapter,
+    ToggleMiniPlayer,
+    ToggleEqualizer,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -134,6 +138,10 @@ pub fn default_bindings() -> Vec<Binding> {
         b(KeyChord::new("0"), ZoomReset),
         b(KeyChord::new("home"), JumpStart),
         b(KeyChord::new("end"), JumpEnd),
+        b(KeyChord::new("pagedown"), NextChapter),
+        b(KeyChord::new("pageup"), PrevChapter),
+        b(KeyChord::new("t"), ToggleMiniPlayer),
+        b(KeyChord::new("e"), ToggleEqualizer),
     ]
 }
 

@@ -7,6 +7,7 @@ pub mod error;
 pub mod formats;
 pub mod history;
 pub mod i18n;
+pub mod m3u;
 pub mod media;
 pub mod playlist;
 pub mod settings;
@@ -16,6 +17,7 @@ pub mod torrent;
 
 pub use error::{Error, Result};
 pub use history::{History, HistoryEntry};
+pub use m3u::M3uEntry;
 pub use media::MediaKind;
 pub use playlist::{Playlist, PlaylistItem, RepeatMode};
 pub use settings::{Settings, Theme};

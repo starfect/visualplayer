@@ -5,6 +5,9 @@ import { player, settings as settingsIpc } from '../../ipc';
 import { mpv } from '../../ipc/mpv';
 import { video } from '../video';
 import { toggleAbLoop } from '../abloop';
+import { chapters } from '../chapters';
+import { equalizer } from '../equalizer';
+import { toggleMiniPlayer } from '../pip';
 import { playNext, playPrev } from '../../controllers/playback';
 import { toggleFullscreen, exitFullscreen } from '../../ui/fullscreen';
 import { settingsStore } from '../../stores/settings';
@@ -114,6 +117,14 @@ async function dispatch(action: Action): Promise<void> {
       return player.seek(0, 'absolute');
     case 'jump_end':
       return player.seek(Math.max(0, p.duration - 1), 'absolute');
+    case 'next_chapter':
+      return chapters.next();
+    case 'prev_chapter':
+      return chapters.prev();
+    case 'toggle_mini_player':
+      return toggleMiniPlayer();
+    case 'toggle_equalizer':
+      return equalizer.toggle();
   }
 }
 

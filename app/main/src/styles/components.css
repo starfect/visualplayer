@@ -459,3 +459,64 @@ input[type='range']::-moz-range-thumb {
 .toast-error {
   background: #b3261e;
 }
+
+.panel-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* Audio equalizer */
+.eq-preset {
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  border-radius: 99px;
+  padding: 5px 10px;
+  font: inherit;
+  font-size: 13px;
+}
+.eq-bands {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.eq-row {
+  gap: 8px;
+}
+.eq-label {
+  flex: 0 0 36px;
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+}
+
+/* Chapters */
+.chapter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.chapter-chip {
+  text-align: left;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.chapter-chip.current {
+  background: var(--brand);
+  color: var(--brand-contrast);
+  border-color: transparent;
+}
+
+/* Mini-player window */
+.stage.mini-player .top-bar,
+.stage.mini-player .panel {
+  display: none;
+}

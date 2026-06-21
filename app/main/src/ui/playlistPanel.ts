@@ -2,10 +2,32 @@
 import { playlistStore } from '../stores/playlist';
 import { uiStore } from '../stores/ui';
 import { playItemById } from '../controllers/playback';
-import { playlist as playlistIpc } from '../ipc';
+import { playlist as playlistIpc, pickPlaylistToOpen, pickPlaylistToSave } from '../ipc';
 import type { Playlist, PlaylistItem } from '../ipc/types';
 import { h, icon } from './dom';
+import { toast, describeError } from './toast';
 import { t } from './../i18n';
+
+async function savePlaylist(): Promise<void> {
+  try {
+    const path = await pickPlaylistToSave();
+    if (!path) return;
+    await playlistIpc.exportM3u(path);
+    toast(t('playlist.saved'));
+  } catch (err) {
+    toast(describeError(err), 'error');
+  }
+}
+
+async function loadPlaylist(): Promise<void> {
+  try {
+    const path = await pickPlaylistToOpen();
+    if (!path) return;
+    playlistStore.set(await playlistIpc.importM3u(path));
+  } catch (err) {
+    toast(describeError(err), 'error');
+  }
+}
 
 function basename(path: string): string {
   const parts = path.split(/[\\/]/);
@@ -45,19 +67,26 @@ export function createPlaylistPanel(): HTMLElement {
     t('playlist.empty'),
   ]);
 
-  const header = h('header', { class: 'panel-header' }, [
-    h('h2', { 'data-i18n': 'playlist.title' }, [t('playlist.title')]),
+  const headerBtn = (iconName: string, label: string, onClick: () => void) =>
     h(
       'button',
       {
         class: 'icon-btn small',
         type: 'button',
-        title: t('settings.close'),
-        'aria-label': t('settings.close'),
-        onclick: () => uiStore.update({ playlistOpen: false }),
+        title: label,
+        'aria-label': label,
+        onclick: onClick,
       },
-      [icon('close')],
-    ),
+      [icon(iconName)],
+    );
+
+  const header = h('header', { class: 'panel-header' }, [
+    h('h2', { 'data-i18n': 'playlist.title' }, [t('playlist.title')]),
+    h('div', { class: 'panel-header-actions' }, [
+      headerBtn('load', t('playlist.load'), () => void loadPlaylist()),
+      headerBtn('save', t('playlist.save'), () => void savePlaylist()),
+      headerBtn('close', t('settings.close'), () => uiStore.update({ playlistOpen: false })),
+    ]),
   ]);
 
   const panel = h('aside', { class: 'panel playlist-panel' }, [header, empty, list]);

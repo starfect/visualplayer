@@ -58,6 +58,12 @@ const ICONS: Record<string, string> = {
   tools:
     '<svg viewBox="0 0 24 24"><path d="M4 6h10v2H4zm12 0h4v2h-4zM4 11h4v2H4zm6 0h10v2H10zM4 16h10v2H4zm12 0h4v2h-4z"/></svg>',
   info: '<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>',
+  save: '<svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5zm2 2v4h8V5zm5 6a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>',
+  load: '<svg viewBox="0 0 24 24"><path d="M12 3v9.6l3.3-3.3L16.7 11 12 15.7 7.3 11l1.4-1.7L12 12.6V3zM5 19h14v2H5z"/></svg>',
+  pip: '<svg viewBox="0 0 24 24"><path d="M3 5h18v14H3zm10 5v5h6v-5z"/></svg>',
+  chapter: '<svg viewBox="0 0 24 24"><path d="M4 5h2v14H4zm14 0h2v14h-2zM8 7l8 5-8 5z"/></svg>',
+  equalizer:
+    '<svg viewBox="0 0 24 24"><path d="M7 4h2v6H7zm0 8h2v8H7zM11 4h2v12h-2zm0 14h2v2h-2zM15 4h2v4h-2zm0 6h2v10h-2z"/></svg>',
 };
 
 export function icon(name: string): HTMLSpanElement {

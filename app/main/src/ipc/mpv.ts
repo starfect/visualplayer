@@ -15,6 +15,7 @@ import {
 
 import { inTauri } from './env';
 import { playerStore } from '../stores/player';
+import { chaptersStore } from '../stores/chapters';
 import type { MediaInfo, TrackInfo } from './types';
 
 const OBSERVED = [
@@ -26,6 +27,8 @@ const OBSERVED = [
   ['volume', 'double', 'none'],
   ['speed', 'double', 'none'],
   ['sub-text', 'string', 'none'],
+  ['chapter', 'int64', 'none'],
+  ['chapters', 'int64', 'none'],
 ] as const satisfies MpvObservableProperty[];
 
 function onProp({ name, data }: { name: string; data: unknown }): void {
@@ -53,6 +56,12 @@ function onProp({ name, data }: { name: string; data: unknown }): void {
       break;
     case 'sub-text':
       playerStore.update({ subText: typeof data === 'string' ? data : '' });
+      break;
+    case 'chapter':
+      chaptersStore.update({ current: typeof data === 'number' ? data : -1 });
+      break;
+    case 'chapters':
+      chaptersStore.update({ count: typeof data === 'number' ? data : 0 });
       break;
   }
 }
@@ -148,6 +157,14 @@ export const mpv = {
   setAbLoopA: (t: number | 'no') => prop('ab-loop-a', t),
   setAbLoopB: (t: number | 'no') => prop('ab-loop-b', t),
   setLoopFile: (on: boolean) => prop('loop-file', on ? 'inf' : 'no'),
+
+  setAudioFilter: (value: string) => prop('af', value),
+  addChapter: (delta: number) => cmd('add', ['chapter', delta]),
+  setChapter: (index: number) => prop('chapter', index),
+  async chapterList(): Promise<{ title: string | null; time: number }[]> {
+    const raw = (await getProp<{ title?: string; time?: number }[]>('chapter-list', 'node')) ?? [];
+    return raw.map((c) => ({ title: c.title ?? null, time: c.time ?? 0 }));
+  },
 
   async mediaInfo(): Promise<MediaInfo> {
     const raw = (await getProp<RawTrack[]>('track-list', 'node')) ?? [];

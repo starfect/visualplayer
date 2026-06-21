@@ -2,9 +2,11 @@
 //! shared [`crate::AppState`] playlist and return the updated snapshot so the
 //! frontend store can replace its state in one step.
 
+use std::path::{Path, PathBuf};
+
 use tauri::State;
-use vp_core::error::Result;
-use vp_core::Playlist;
+use vp_core::error::{Error, Result};
+use vp_core::{m3u, M3uEntry, Playlist};
 
 use crate::AppState;
 
@@ -48,4 +50,51 @@ pub fn playlist_select(state: State<AppState>, id: u64) -> Result<Playlist> {
     let mut pl = state.playlist.lock().unwrap();
     pl.select(id)?;
     Ok(pl.clone())
+}
+
+/// Write the current playlist to `path` as an extended-M3U file.
+#[tauri::command]
+pub fn playlist_export_m3u(state: State<AppState>, path: String) -> Result<String> {
+    let pl = state.playlist.lock().unwrap();
+    let entries: Vec<M3uEntry> = pl
+        .items
+        .iter()
+        .map(|item| M3uEntry::new(item.path.clone(), item.title.clone(), -1))
+        .collect();
+    std::fs::write(&path, m3u::serialize(&entries))?;
+    Ok(path)
+}
+
+/// Load an M3U/M3U8 file, appending its entries to the playlist. Relative paths
+/// are resolved against the playlist file's own directory; URLs are kept as-is.
+#[tauri::command]
+pub fn playlist_import_m3u(state: State<AppState>, path: String) -> Result<Playlist> {
+    let file = PathBuf::from(&path);
+    let base = file.parent().unwrap_or_else(|| Path::new(""));
+    let content = std::fs::read_to_string(&file)?;
+    let entries = m3u::parse(&content);
+    if entries.is_empty() {
+        return Err(Error::Parse("empty playlist".into()));
+    }
+    let mut pl = state.playlist.lock().unwrap();
+    for entry in entries {
+        pl.add(resolve_entry(base, &entry.path), entry.title);
+    }
+    Ok(pl.clone())
+}
+
+fn resolve_entry(base: &Path, raw: &str) -> String {
+    if is_url(raw) {
+        return raw.to_string();
+    }
+    let p = Path::new(raw);
+    if p.is_absolute() {
+        raw.to_string()
+    } else {
+        base.join(p).to_string_lossy().into_owned()
+    }
+}
+
+fn is_url(value: &str) -> bool {
+    value.contains("://")
 }

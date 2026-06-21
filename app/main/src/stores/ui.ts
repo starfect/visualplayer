@@ -5,6 +5,7 @@ export interface UiState {
   settingsOpen: boolean;
   toolsOpen: boolean;
   controlsVisible: boolean;
+  miniPlayer: boolean;
 }
 
 export const uiStore = createStore<UiState>({
@@ -12,6 +13,7 @@ export const uiStore = createStore<UiState>({
   settingsOpen: false,
   toolsOpen: false,
   controlsVisible: true,
+  miniPlayer: false,
 });
 
 export function closePanels(): void {
