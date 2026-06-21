@@ -1,0 +1,355 @@
+/* UI chrome: top bar, controls, panels, overlays (BLUEPRINT §11). Controls
+   auto-hide during playback; layout tolerates variable text lengths (i18n). */
+
+.stage {
+  display: block;
+}
+
+.video-stage {
+  position: absolute;
+  inset: 0;
+}
+
+/* ---- Top bar -------------------------------------------------------------- */
+.top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space);
+  padding: 10px 14px;
+  background: linear-gradient(to bottom, var(--overlay), transparent);
+  color: var(--on-overlay);
+  transition: opacity var(--transition);
+}
+.app-title {
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+.spacer,
+.control-group.spacer {
+  flex: 1 1 auto;
+}
+
+/* ---- Buttons -------------------------------------------------------------- */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--on-overlay);
+  transition:
+    background var(--transition),
+    transform var(--transition);
+}
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+.icon-btn:active {
+  transform: scale(0.94);
+}
+.icon-btn.small {
+  width: 30px;
+  height: 30px;
+}
+.icon-btn[disabled] {
+  opacity: 0.4;
+  pointer-events: none;
+}
+.icon svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+  display: block;
+}
+.icon-btn.small .icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.btn {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  font-size: 14px;
+  transition: background var(--transition);
+}
+.btn.primary {
+  background: var(--brand);
+  color: var(--brand-contrast);
+  border-color: transparent;
+}
+.btn.primary:hover {
+  filter: brightness(1.06);
+}
+
+/* ---- Control bar ---------------------------------------------------------- */
+.control-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 16px 14px;
+  background: linear-gradient(to top, var(--overlay-strong), transparent);
+  color: var(--on-overlay);
+  transition:
+    opacity var(--transition),
+    transform var(--transition);
+}
+.control-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.time {
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  min-width: 44px;
+  text-align: center;
+  color: var(--on-overlay);
+}
+
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.3);
+  outline: none;
+}
+input[type='range'].seek {
+  flex: 1 1 auto;
+}
+input[type='range'].volume {
+  width: 90px;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--brand);
+  border: 2px solid #fff;
+}
+input[type='range']::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--brand);
+  border: 2px solid #fff;
+}
+
+.speed {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--on-overlay);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-sm);
+  padding: 6px 8px;
+  font-size: 13px;
+}
+
+/* Auto-hide chrome during playback. */
+.stage.controls-hidden .top-bar,
+.stage.controls-hidden .control-bar {
+  opacity: 0;
+  pointer-events: none;
+}
+.stage.controls-hidden {
+  cursor: none;
+}
+
+/* ---- Drag-over hint ------------------------------------------------------- */
+.stage.drag-over::after {
+  content: '';
+  position: absolute;
+  inset: 16px;
+  border: 2px dashed var(--brand);
+  border-radius: var(--radius);
+  pointer-events: none;
+}
+
+/* ---- Empty state ---------------------------------------------------------- */
+.empty-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+  padding: 24px;
+  color: var(--on-overlay);
+  background: var(--overlay);
+}
+.empty-state .icon svg {
+  width: 56px;
+  height: 56px;
+  opacity: 0.6;
+}
+.empty-state p {
+  max-width: 36ch;
+  margin: 0;
+  color: var(--on-overlay);
+  opacity: 0.85;
+}
+
+/* ---- Subtitle overlay ----------------------------------------------------- */
+.subtitle-layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12%;
+  display: flex;
+  justify-content: center;
+  padding: 0 8%;
+  pointer-events: none;
+}
+.subtitle-text {
+  display: none;
+  max-width: 90%;
+  padding: 2px 10px;
+  font-size: clamp(18px, 2.6vw, 30px);
+  line-height: 1.3;
+  text-align: center;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 6px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  white-space: pre-wrap;
+}
+.subtitle-layer.visible .subtitle-text {
+  display: inline-block;
+}
+
+/* ---- Side panels ---------------------------------------------------------- */
+.panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: min(340px, 86vw);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: var(--surface);
+  color: var(--text);
+  border-left: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  transform: translateX(100%);
+  transition: transform var(--transition);
+  overflow-y: auto;
+}
+.panel.open {
+  transform: translateX(0);
+}
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.panel-header h2 {
+  margin: 0;
+  font-size: 16px;
+}
+.panel-header .icon-btn {
+  color: var(--text);
+}
+.panel-empty {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.playlist-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.playlist-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.playlist-item:hover {
+  background: var(--surface-2);
+}
+.playlist-item.current {
+  background: color-mix(in srgb, var(--brand) 16%, transparent);
+  color: var(--brand);
+}
+.playlist-item-label {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+}
+.playlist-item .icon-btn {
+  color: var(--muted);
+}
+
+.settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text);
+}
+.settings-select {
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+}
+
+/* ---- Toasts --------------------------------------------------------------- */
+.toast-container {
+  position: fixed;
+  left: 50%;
+  bottom: 84px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+  pointer-events: none;
+}
+.toast {
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--overlay-strong);
+  color: var(--on-overlay);
+  font-size: 14px;
+  box-shadow: var(--shadow);
+  max-width: 80vw;
+}
+.toast-error {
+  background: #b3261e;
+  color: #fff;
+}

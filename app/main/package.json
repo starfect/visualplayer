@@ -1,0 +1,31 @@
+{
+  "name": "visualplayer",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "VisualPlayer frontend (Vite + Vanilla TypeScript, no UI framework).",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . && prettier --check \"src/**/*.{ts,css,json}\"",
+    "format": "prettier --write \"src/**/*.{ts,css,json}\"",
+    "tauri": "tauri"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-dialog": "^2",
+    "@tauri-apps/plugin-os": "^2",
+    "tauri-plugin-libmpv-api": "^0.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9",
+    "@tauri-apps/cli": "^2",
+    "eslint": "^9",
+    "globals": "^15",
+    "prettier": "^3",
+    "typescript": "^5.6",
+    "typescript-eslint": "^8",
+    "vite": "^5"
+  }
+}
