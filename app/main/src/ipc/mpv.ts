@@ -1,27 +1,25 @@
-// Thin wrapper over `tauri-plugin-libmpv-api` (BLUEPRINT §4.2).
-//
-// The libmpv plugin renders video on a GPU surface below the transparent WebView
-// and exposes mpv control to JS. This module owns low-level transport (the
-// BLUEPRINT §7 player_* operations realized through the plugin) plus property
-// observation that feeds the player store. All calls are guarded so the UI still
-// renders outside Tauri.
+// Wrapper over `tauri-plugin-libmpv-api`: low-level mpv transport plus the rich
+// VLC-style control surface (video filters, tracks, A-B loop, media info).
 
 import {
   init,
   command,
   setProperty,
+  getProperty,
   observeProperties,
   destroy,
   type MpvConfig,
+  type MpvFormat,
   type MpvObservableProperty,
 } from 'tauri-plugin-libmpv-api';
 
 import { inTauri } from './env';
 import { playerStore } from '../stores/player';
+import type { MediaInfo, TrackInfo } from './types';
 
-// Scalar properties pushed to the player store (track-list comes in M2).
 const OBSERVED = [
   ['pause', 'flag'],
+  ['mute', 'flag'],
   ['time-pos', 'double', 'none'],
   ['duration', 'double', 'none'],
   ['filename', 'string', 'none'],
@@ -34,6 +32,9 @@ function onProp({ name, data }: { name: string; data: unknown }): void {
   switch (name) {
     case 'pause':
       playerStore.update({ paused: Boolean(data) });
+      break;
+    case 'mute':
+      playerStore.update({ muted: Boolean(data) });
       break;
     case 'time-pos':
       playerStore.update({ timePos: typeof data === 'number' ? data : 0 });
@@ -56,14 +57,14 @@ function onProp({ name, data }: { name: string; data: unknown }): void {
   }
 }
 
-/** Initialize mpv and start observing properties. No-op outside Tauri. */
-export async function mpvInit(): Promise<void> {
+export async function mpvInit(hwdec: boolean): Promise<void> {
   if (!inTauri) return;
   const config: MpvConfig = {
     initialOptions: {
       vo: 'gpu-next',
-      hwdec: 'auto-safe',
+      hwdec: hwdec ? 'auto-safe' : 'no',
       'media-controls': 'no',
+      'keep-open': 'yes',
     },
     observedProperties: OBSERVED,
   };
@@ -71,37 +72,106 @@ export async function mpvInit(): Promise<void> {
   await observeProperties(OBSERVED, onProp);
 }
 
-/** Tear down mpv (e.g. on window close). */
 export async function mpvDestroy(): Promise<void> {
-  if (!inTauri) return;
-  await destroy();
+  if (inTauri) await destroy();
 }
 
 async function cmd(name: string, args: (string | number)[] = []): Promise<void> {
-  if (!inTauri) return;
-  await command(name, args);
+  if (inTauri) await command(name, args);
 }
 
 async function prop(name: string, value: string | number | boolean): Promise<void> {
-  if (!inTauri) return;
-  await setProperty(name, value);
+  if (inTauri) await setProperty(name, value);
 }
 
-/** Low-level mpv transport used by the IPC `player` facade. */
+async function getProp<T>(name: string, format: MpvFormat): Promise<T | null> {
+  if (!inTauri) return null;
+  try {
+    return (await getProperty(name, format)) as T;
+  } catch {
+    return null;
+  }
+}
+
+interface RawTrack {
+  id: number;
+  type: string;
+  title?: string;
+  lang?: string;
+  selected?: boolean;
+  codec?: string;
+}
+
 export const mpv = {
   loadFile: (url: string) => cmd('loadfile', [url]),
   addSubtitle: (path: string) => cmd('sub-add', [path]),
+  stop: () => cmd('stop'),
+
   play: () => prop('pause', false),
   pause: () => prop('pause', true),
   togglePause: () => cmd('cycle', ['pause']),
   seekRelative: (seconds: number) => cmd('seek', [seconds, 'relative']),
   seekAbsolute: (seconds: number) => cmd('seek', [seconds, 'absolute']),
-  setVolume: (volume: number) => prop('volume', Math.round(volume)),
-  setSpeed: (speed: number) => prop('speed', speed),
-  setAudioTrack: (id: number) => prop('aid', id),
-  setSubtitleTrack: (id: number) => prop('sid', id),
-  setSubtitleDelay: (seconds: number) => prop('sub-delay', seconds),
   frameStep: () => cmd('frame-step'),
+  frameBackStep: () => cmd('frame-back-step'),
   screenshot: () => cmd('screenshot'),
-  stop: () => cmd('stop'),
+
+  setVolume: (v: number) => prop('volume', Math.round(v)),
+  setMute: (m: boolean) => prop('mute', m),
+  toggleMute: () => cmd('cycle', ['mute']),
+  setSpeed: (s: number) => prop('speed', s),
+
+  setAspect: (ratio: string) => prop('video-aspect-override', ratio),
+  setRotate: (deg: number) => prop('video-rotate', ((deg % 360) + 360) % 360),
+  setZoom: (zoom: number) => prop('video-zoom', zoom),
+  setPan: (x: number, y: number) => Promise.all([prop('video-pan-x', x), prop('video-pan-y', y)]),
+  setDeinterlace: (on: boolean) => prop('deinterlace', on),
+  setBrightness: (v: number) => prop('brightness', clampEq(v)),
+  setContrast: (v: number) => prop('contrast', clampEq(v)),
+  setGamma: (v: number) => prop('gamma', clampEq(v)),
+  setSaturation: (v: number) => prop('saturation', clampEq(v)),
+  setHue: (v: number) => prop('hue', clampEq(v)),
+
+  setAudioTrack: (id: number | 'no') => prop('aid', id),
+  cycleAudioTrack: () => cmd('cycle', ['audio']),
+  setAudioDelay: (seconds: number) => prop('audio-delay', seconds),
+
+  setSubtitleTrack: (id: number | 'no') => prop('sid', id),
+  cycleSubtitle: () => cmd('cycle', ['sub']),
+  setSubtitleVisibility: (on: boolean) => prop('sub-visibility', on),
+  setSubtitleDelay: (seconds: number) => prop('sub-delay', seconds),
+  setSubtitleScale: (scale: number) => prop('sub-scale', scale),
+  setSubtitlePos: (pos: number) => prop('sub-pos', pos),
+  setSubtitleColor: (color: string) => prop('sub-color', color),
+  setSubtitleFontSize: (size: number) => prop('sub-font-size', size),
+
+  setAbLoopA: (t: number | 'no') => prop('ab-loop-a', t),
+  setAbLoopB: (t: number | 'no') => prop('ab-loop-b', t),
+  setLoopFile: (on: boolean) => prop('loop-file', on ? 'inf' : 'no'),
+
+  async mediaInfo(): Promise<MediaInfo> {
+    const raw = (await getProp<RawTrack[]>('track-list', 'node')) ?? [];
+    const tracks: TrackInfo[] = raw.map((t) => ({
+      id: t.id,
+      type: (t.type as TrackInfo['type']) ?? 'video',
+      title: t.title,
+      lang: t.lang,
+      selected: Boolean(t.selected),
+      codec: t.codec,
+    }));
+    return {
+      filename: await getProp<string>('filename', 'string'),
+      durationSeconds: (await getProp<number>('duration', 'double')) ?? 0,
+      width: (await getProp<number>('width', 'int64')) ?? 0,
+      height: (await getProp<number>('height', 'int64')) ?? 0,
+      videoCodec: await getProp<string>('video-codec', 'string'),
+      audioCodec: await getProp<string>('audio-codec', 'string'),
+      fps: await getProp<number>('container-fps', 'double'),
+      tracks,
+    };
+  },
 };
+
+function clampEq(v: number): number {
+  return Math.max(-100, Math.min(100, Math.round(v)));
+}

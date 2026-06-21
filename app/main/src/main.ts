@@ -1,6 +1,3 @@
-// Application bootstrap (BLUEPRINT §6). Order: load settings → resolve language →
-// apply theme → mount UI → init mpv → subscribe events → open association files.
-
 import './styles/tokens.css';
 import './styles/base.css';
 import './styles/components.css';
@@ -8,12 +5,12 @@ import './styles/components.css';
 import { mountApp } from './ui/appShell';
 import { applyTheme } from './ui/theme';
 import { setLanguage } from './i18n';
-import { settings as settingsIpc, system, detectOsLocale } from './ipc';
+import { settings as settingsIpc, assoc, detectOsLocale } from './ipc';
 import { inTauri } from './ipc/env';
-import { mpvInit } from './ipc/mpv';
-import { subscribeTaskEvents } from './ipc/events';
+import { mpv, mpvInit } from './ipc/mpv';
+import { initShortcuts } from './features/shortcuts';
 import { settingsStore } from './stores/settings';
-import { openPaths } from './controllers/playback';
+import { openPaths, recordCurrentProgress } from './controllers/playback';
 import { toast, describeError } from './ui/toast';
 import type { Settings } from './ipc/types';
 
@@ -24,6 +21,12 @@ async function loadSettings(): Promise<Settings> {
   } catch {
     return settingsStore.get();
   }
+}
+
+async function applyInitialPreferences(s: Settings): Promise<void> {
+  await mpv.setVolume(s.volume);
+  await mpv.setSubtitleFontSize(s.subtitles.fontSize);
+  if (s.subtitles.defaultDelay) await mpv.setSubtitleDelay(s.subtitles.defaultDelay);
 }
 
 async function boot(): Promise<void> {
@@ -37,12 +40,16 @@ async function boot(): Promise<void> {
   const root = document.getElementById('app');
   if (root) mountApp(root);
 
-  await mpvInit().catch((err) => toast(describeError(err), 'error'));
-  await subscribeTaskEvents();
+  await mpvInit(settings.playback.hardwareDecoding).catch((e) => toast(describeError(e), 'error'));
+  await applyInitialPreferences(settings).catch(() => {});
+  await initShortcuts();
+
+  window.setInterval(() => void recordCurrentProgress(), 15000);
+  window.addEventListener('beforeunload', () => void recordCurrentProgress());
 
   if (inTauri) {
     try {
-      const files = await system.initialFiles();
+      const files = await assoc.initialFiles();
       if (files.length > 0) await openPaths(files);
     } catch {
       /* no association files */

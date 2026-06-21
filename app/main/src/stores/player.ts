@@ -1,4 +1,3 @@
-// Player playback state, fed by mpv property observation (BLUEPRINT §6.2).
 import { createStore } from './store';
 
 export interface PlayerState {
@@ -7,6 +6,7 @@ export interface PlayerState {
   title: string | null;
   filename: string | null;
   paused: boolean;
+  muted: boolean;
   timePos: number;
   duration: number;
   volume: number;
@@ -20,6 +20,7 @@ export const playerStore = createStore<PlayerState>({
   title: null,
   filename: null,
   paused: true,
+  muted: false,
   timePos: 0,
   duration: 0,
   volume: 100,

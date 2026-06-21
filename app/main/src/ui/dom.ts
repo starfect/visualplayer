@@ -1,8 +1,7 @@
-// Minimal DOM helpers (no framework — BLUEPRINT §6.1).
+// Minimal DOM helpers (no framework).
 
 type Attrs = Record<string, string | number | boolean | EventListener | undefined>;
 
-/** Create an element with attributes (and `onclick`-style listeners) and children. */
 export function h<K extends keyof HTMLElementTagNameMap>(
   tag: K,
   attrs: Attrs = {},
@@ -25,7 +24,6 @@ export function h<K extends keyof HTMLElementTagNameMap>(
   return node;
 }
 
-/** Format seconds as `m:ss` or `h:mm:ss`. */
 export function formatTime(totalSeconds: number): string {
   const total = Number.isFinite(totalSeconds) && totalSeconds > 0 ? totalSeconds : 0;
   const s = Math.floor(total % 60);
@@ -43,8 +41,7 @@ const ICONS: Record<string, string> = {
   stop: '<svg viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>',
   volume:
     '<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 5V4L8 9zm12 3a4 4 0 0 0-2.5-3.7v7.4A4 4 0 0 0 16 12z"/></svg>',
-  settings:
-    '<svg viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm8 4 2-1.5-2-3.5-2.4 1a6.7 6.7 0 0 0-1.7-1L13 4h-2l-.9 2.5a6.7 6.7 0 0 0-1.7 1L6 6.5 4 10l2 1.5a6.8 6.8 0 0 0 0 1L4 14l2 3.5 2.4-1c.5.4 1.1.8 1.7 1L11 20h2l.9-2.5c.6-.2 1.2-.6 1.7-1l2.4 1 2-3.5-2-1.5a6.8 6.8 0 0 0 0-1z"/></svg>',
+  mute: '<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 5V4L8 9zm15 3 2-2-1.2-1.2L17 9.8 14.2 7 13 8.2 15.8 11 13 13.8 14.2 15 17 12.2 19.8 15 21 13.8z"/></svg>',
   fullscreen:
     '<svg viewBox="0 0 24 24"><path d="M4 4h6v2H6v4H4zm10 0h6v6h-2V6h-4zM4 14h2v4h4v2H4zm14 0h2v6h-6v-2h4z"/></svg>',
   screenshot:
@@ -54,11 +51,37 @@ const ICONS: Record<string, string> = {
     '<svg viewBox="0 0 24 24"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3z"/></svg>',
   folder:
     '<svg viewBox="0 0 24 24"><path d="M10 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8z"/></svg>',
+  settings:
+    '<svg viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm9.4 4-2 1.2.2 2.3-2.2.9-1.4 1.8-2.3-.5-2 1.2-2-1.2-2.3.5-1.4-1.8-2.2-.9.2-2.3-2-1.2 2-1.2-.2-2.3 2.2-.9 1.4-1.8 2.3.5 2-1.2 2 1.2 2.3-.5 1.4 1.8 2.2.9-.2 2.3z"/></svg>',
+  subtitle:
+    '<svg viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm2 8v2h6v-2zm8 0v2h4v-2zM6 15v2h10v-2zm12 0v2h0v-2z"/></svg>',
+  tools:
+    '<svg viewBox="0 0 24 24"><path d="M4 6h10v2H4zm12 0h4v2h-4zM4 11h4v2H4zm6 0h10v2H10zM4 16h10v2H4zm12 0h4v2h-4z"/></svg>',
+  info: '<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>',
 };
 
-/** Build an inline SVG icon span. */
 export function icon(name: string): HTMLSpanElement {
   const span = h('span', { class: 'icon', 'aria-hidden': 'true' });
   span.innerHTML = ICONS[name] ?? '';
   return span;
+}
+
+export function iconButton(
+  i18nKey: string,
+  iconName: string,
+  onClick: () => void,
+  translate: (k: string) => string,
+  extraClass = '',
+): HTMLButtonElement {
+  return h(
+    'button',
+    {
+      class: `icon-btn ${extraClass}`.trim(),
+      type: 'button',
+      title: translate(i18nKey),
+      'aria-label': translate(i18nKey),
+      onclick: onClick,
+    },
+    [icon(iconName)],
+  );
 }

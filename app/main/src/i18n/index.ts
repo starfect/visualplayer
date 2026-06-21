@@ -1,13 +1,13 @@
-// Lightweight, framework-free i18n loader (BLUEPRINT §6.3).
-// English (`en`) is the source of truth; missing keys fall back to English, then
-// to the key itself. Supports `{var}` interpolation. Default language is `en`.
+// Lightweight, framework-free i18n loader. English (`en`) is the source of truth;
+// missing keys fall back to English, then to the key. Supports `{var}` interpolation.
 
 import en from './locales/en.json';
 import ko from './locales/ko.json';
+import ja from './locales/ja.json';
 
 type Dict = Record<string, string>;
 
-const DICTS: Record<string, Dict> = { en: en as Dict, ko: ko as Dict };
+const DICTS: Record<string, Dict> = { en: en as Dict, ko: ko as Dict, ja: ja as Dict };
 
 export const DEFAULT_LANGUAGE = 'en';
 export const SUPPORTED_LANGUAGES = Object.keys(DICTS);

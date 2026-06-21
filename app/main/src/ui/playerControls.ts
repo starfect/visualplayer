@@ -1,48 +1,28 @@
-// Bottom control bar: transport, seek, volume, speed, subtitle/fullscreen.
-// Wires DOM events to the IPC `player` facade and reflects the player store.
-
 import { player } from '../ipc';
-import { inTauri } from '../ipc/env';
+import { mpv } from '../ipc/mpv';
 import { playerStore, type PlayerState } from '../stores/player';
 import { settingsStore } from '../stores/settings';
+import { uiStore } from '../stores/ui';
 import { playNext, playPrev } from '../controllers/playback';
-import { h, icon, formatTime } from './dom';
+import { toggleFullscreen } from './fullscreen';
+import { h, icon, iconButton, formatTime } from './dom';
 import { t } from '../i18n';
 
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
-function iconButton(i18nKey: string, iconName: string, onClick: () => void): HTMLButtonElement {
-  return h(
-    'button',
-    {
-      class: 'icon-btn',
-      type: 'button',
-      'data-i18n-title': i18nKey,
-      'data-i18n-aria': i18nKey,
-      title: t(i18nKey),
-      'aria-label': t(i18nKey),
-      onclick: onClick,
-    },
-    [icon(iconName)],
-  );
-}
-
-async function toggleFullscreen(): Promise<void> {
-  if (!inTauri) return;
-  const { getCurrentWindow } = await import('@tauri-apps/api/window');
-  const win = getCurrentWindow();
-  await win.setFullscreen(!(await win.isFullscreen()));
-}
-
 export function createControlBar(): HTMLElement {
   let seeking = false;
+  const btn = (key: string, ic: string, fn: () => void) => iconButton(key, ic, fn, t);
+  const toggle = (k: 'playlistOpen' | 'settingsOpen' | 'toolsOpen') => () =>
+    uiStore.update({ [k]: !uiStore.get()[k] });
 
-  const playBtn = iconButton('player.play', 'play', () => void player.togglePause());
-  const prevBtn = iconButton('player.previous', 'prev', () => void playPrev());
-  const nextBtn = iconButton('player.next', 'next', () => void playNext());
+  const playBtn = btn('player.play', 'play', () => void player.togglePause());
+  const prevBtn = btn('player.previous', 'prev', () => void playPrev());
+  const nextBtn = btn('player.next', 'next', () => void playNext());
+  const muteBtn = btn('player.mute', 'volume', () => void player.toggleMute());
 
-  const current = h('span', { class: 'time time-current' }, ['0:00']);
-  const total = h('span', { class: 'time time-total' }, ['0:00']);
+  const current = h('span', { class: 'time' }, ['0:00']);
+  const total = h('span', { class: 'time' }, ['0:00']);
 
   const seek = h('input', {
     class: 'seek',
@@ -51,18 +31,13 @@ export function createControlBar(): HTMLElement {
     max: '100',
     step: '0.1',
     value: '0',
-    'data-i18n-aria': 'player.play',
+    'aria-label': t('player.play'),
   }) as HTMLInputElement;
-  seek.addEventListener('pointerdown', () => {
-    seeking = true;
-  });
-  const commitSeek = () => {
+  seek.addEventListener('pointerdown', () => (seeking = true));
+  seek.addEventListener('input', () => (current.textContent = formatTime(Number(seek.value))));
+  seek.addEventListener('change', () => {
     seeking = false;
     void player.seek(Number(seek.value), 'absolute');
-  };
-  seek.addEventListener('change', commitSeek);
-  seek.addEventListener('input', () => {
-    current.textContent = formatTime(Number(seek.value));
   });
 
   const volume = h('input', {
@@ -72,7 +47,6 @@ export function createControlBar(): HTMLElement {
     max: '100',
     step: '1',
     value: '100',
-    'data-i18n-aria': 'player.volume',
     'aria-label': t('player.volume'),
   }) as HTMLInputElement;
   volume.addEventListener('input', () => {
@@ -83,33 +57,34 @@ export function createControlBar(): HTMLElement {
 
   const speed = h(
     'select',
-    { class: 'speed', 'data-i18n-title': 'player.speed', title: t('player.speed') },
+    { class: 'speed', 'aria-label': t('player.speed'), title: t('player.speed') },
     SPEEDS.map((s) => h('option', { value: String(s), selected: s === 1 }, [`${s}×`])),
   ) as HTMLSelectElement;
   speed.addEventListener('change', () => void player.setSpeed(Number(speed.value)));
 
-  const shotBtn = iconButton('player.screenshot', 'screenshot', () => void player.screenshot());
-  const fsBtn = iconButton('player.fullscreen', 'fullscreen', () => void toggleFullscreen());
-
   const bar = h('footer', { class: 'control-bar' }, [
-    h('div', { class: 'control-row seek-row' }, [current, seek, total]),
-    h('div', { class: 'control-row buttons-row' }, [
-      h('div', { class: 'control-group' }, [prevBtn, playBtn, nextBtn]),
-      h('div', { class: 'control-group' }, [icon('volume'), volume]),
-      h('div', { class: 'control-group spacer' }, []),
-      h('div', { class: 'control-group' }, [speed, shotBtn, fsBtn]),
+    h('div', { class: 'seek-row' }, [current, seek, total]),
+    h('div', { class: 'buttons-row' }, [
+      h('div', { class: 'group' }, [prevBtn, playBtn, nextBtn]),
+      h('div', { class: 'group' }, [muteBtn, volume]),
+      h('div', { class: 'group' }, [speed]),
+      h('div', { class: 'group grow' }, []),
+      h('div', { class: 'group' }, [
+        btn('subtitle.cycle', 'subtitle', () => void mpv.cycleSubtitle()),
+        btn('tools.title', 'tools', toggle('toolsOpen')),
+        btn('player.screenshot', 'screenshot', () => void player.screenshot()),
+        btn('playlist.title', 'list', toggle('playlistOpen')),
+        btn('settings.title', 'settings', toggle('settingsOpen')),
+        btn('player.fullscreen', 'fullscreen', () => void toggleFullscreen()),
+      ]),
     ]),
   ]);
 
-  const render = (state: PlayerState) => {
-    const btnIcon = state.paused ? 'play' : 'pause';
-    const btnKey = state.paused ? 'player.play' : 'player.pause';
-    playBtn.replaceChildren(icon(btnIcon));
-    playBtn.title = t(btnKey);
-    playBtn.setAttribute('aria-label', t(btnKey));
-    playBtn.dataset.i18nTitle = btnKey;
-    playBtn.dataset.i18nAria = btnKey;
-
+  const controls = [playBtn, prevBtn, nextBtn, seek, speed];
+  playerStore.subscribe((state: PlayerState) => {
+    playBtn.replaceChildren(icon(state.paused ? 'play' : 'pause'));
+    playBtn.setAttribute('aria-label', t(state.paused ? 'player.play' : 'player.pause'));
+    muteBtn.replaceChildren(icon(state.muted ? 'mute' : 'volume'));
     seek.max = String(state.duration > 0 ? state.duration : 100);
     if (!seeking) {
       seek.value = String(state.timePos);
@@ -117,13 +92,8 @@ export function createControlBar(): HTMLElement {
     }
     total.textContent = formatTime(state.duration);
     volume.value = String(Math.round(state.volume));
+    for (const c of controls) c.toggleAttribute('disabled', !state.loaded);
+  });
 
-    const disabled = !state.loaded;
-    for (const ctrl of [playBtn, prevBtn, nextBtn, seek, speed, shotBtn, fsBtn]) {
-      ctrl.toggleAttribute('disabled', disabled);
-    }
-  };
-
-  playerStore.subscribe(render);
   return bar;
 }
