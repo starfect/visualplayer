@@ -65,12 +65,16 @@ jobs:
         include:
           - platform: macos-latest
             args: '--target aarch64-apple-darwin --features torrent'
+            rust_targets: 'aarch64-apple-darwin'
           - platform: macos-latest
             args: '--target x86_64-apple-darwin --features torrent'
+            rust_targets: 'x86_64-apple-darwin'
           - platform: ubuntu-latest
             args: '--features torrent'
+            rust_targets: ''
           - platform: windows-latest
             args: '--features torrent'
+            rust_targets: ''
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
@@ -92,7 +96,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ contains(matrix.args, 'aarch64-apple') && 'aarch64-apple-darwin' || '' }}
+          targets: ${{ matrix.rust_targets }}
       - uses: Swatinem/rust-cache@v2
 
       - uses: actions/setup-node@v4
