@@ -1,4 +1,4 @@
-//! Settings persistence and language commands (BLUEPRINT §6.2/§6.3, §7).
+//! Settings persistence and language commands.
 //!
 //! Settings are stored as JSON in the platform app-config directory. The shape,
 //! defaults, clamping, and language resolution live in [`vp_core::settings`].
@@ -7,6 +7,7 @@ use std::path::PathBuf;
 
 use tauri::{AppHandle, Manager, State};
 use vp_core::error::{Error, Result};
+use vp_core::shortcuts::{self, Binding};
 use vp_core::Settings;
 
 use crate::AppState;
@@ -58,7 +59,7 @@ pub fn settings_set(
     Ok(sane)
 }
 
-/// Change only the UI language (BLUEPRINT default `en`); persists and returns it.
+/// Change only the UI language; persists and returns it.
 #[tauri::command]
 pub fn settings_set_language(
     app: AppHandle,
@@ -74,4 +75,11 @@ pub fn settings_set_language(
     };
     persist(&app, &sane)?;
     Ok(sane)
+}
+
+/// The built-in default keyboard shortcut set (used by the frontend to seed its
+/// keymap when the user has no custom bindings).
+#[tauri::command]
+pub fn settings_default_keybindings() -> Result<Vec<Binding>> {
+    Ok(shortcuts::default_bindings())
 }

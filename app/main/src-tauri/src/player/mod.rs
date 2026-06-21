@@ -1,4 +1,4 @@
-//! Source resolution for playback (BLUEPRINT §7 `player_load`, §9.1, §9.3).
+//! Source resolution for playback.
 //!
 //! `player_load` turns a user input (local path, http(s) URL, or a custom link
 //! file) into a [`MediaSource`] the frontend hands to mpv via the libmpv plugin.

@@ -1,5 +1,5 @@
 //! System/utility IPC: background-task control and third-party license listing
-//! (BLUEPRINT §7, §18.2).
+//!.
 
 use serde::Serialize;
 use tauri::{AppHandle, Manager};
@@ -44,4 +44,24 @@ pub fn licenses_list(app: AppHandle) -> Result<Vec<LicenseEntry>> {
     }
     entries.sort_by(|a, b| a.name.cmp(&b.name));
     Ok(entries)
+}
+
+/// Basic application/runtime info for the about screen.
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AppInfo {
+    pub name: String,
+    pub version: String,
+    pub os: String,
+    pub arch: String,
+}
+
+#[tauri::command]
+pub fn app_info() -> Result<AppInfo> {
+    Ok(AppInfo {
+        name: "VisualPlayer".to_string(),
+        version: env!("CARGO_PKG_VERSION").to_string(),
+        os: std::env::consts::OS.to_string(),
+        arch: std::env::consts::ARCH.to_string(),
+    })
 }

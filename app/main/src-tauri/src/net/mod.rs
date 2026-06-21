@@ -1,4 +1,4 @@
-//! Network source resolution (BLUEPRINT §7, §10.2/§10.3).
+//! Network source resolution.
 //!
 //! Parsing of `.ytvideo`/`.webvideo` link files is implemented now (via
 //! [`vp_core::formats`]). Enumerating playable YouTube formats via the yt-dlp

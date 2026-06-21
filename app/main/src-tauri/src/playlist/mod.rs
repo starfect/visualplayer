@@ -1,4 +1,4 @@
-//! Playlist IPC commands (BLUEPRINT §7, §9.2). All mutations go through the
+//! Playlist IPC commands. All mutations go through the
 //! shared [`crate::AppState`] playlist and return the updated snapshot so the
 //! frontend store can replace its state in one step.
 

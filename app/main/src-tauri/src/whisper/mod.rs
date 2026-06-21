@@ -1,4 +1,4 @@
-//! Local automatic subtitles via Whisper (BLUEPRINT §9.4) — milestone **M3**.
+//! Local automatic subtitles via Whisper — milestone **M3**.
 //!
 //! Planned flow: media → FFmpeg 16 kHz mono PCM → VAD segments → `whisper-rs`
 //! inference → timestamped `.srt`. Runs fully locally (no upload). Stub for now.

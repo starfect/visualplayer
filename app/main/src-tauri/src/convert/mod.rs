@@ -1,7 +1,7 @@
-//! Container/codec conversion via FFmpeg (BLUEPRINT §9.5) — milestone **M3**.
+//! Container/codec conversion via FFmpeg — milestone **M3**.
 //!
 //! Will call the bundled GPL full-build FFmpeg (sidecar) to transcode; the
-//! distributed binary therefore follows GPLv3 (BLUEPRINT §18). Stub for now.
+//! distributed binary therefore follows GPLv3. Stub for now.
 
 use vp_core::error::{Error, Result};
 

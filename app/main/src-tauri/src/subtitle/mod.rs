@@ -1,4 +1,4 @@
-//! Subtitle IPC (BLUEPRINT §7, §9.3).
+//! Subtitle IPC.
 //!
 //! Same-name discovery is app logic (delegated to [`vp_core::subtitle`]).
 //! `subtitle_attach` and `subtitle_set_delay` are mpv operations performed on the
