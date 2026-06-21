@@ -1,0 +1,125 @@
+{
+  "sourceLanguage" : "en",
+  "version" : "1.0",
+  "strings" : {
+    "app.open_file" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Open file" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "파일 열기" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ファイルを開く" } }
+      }
+    },
+    "app.drop_hint" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Open a video or audio file to start playing" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "동영상이나 오디오 파일을 열어 재생을 시작하세요" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "動画または音声ファイルを開いて再生を始めましょう" } }
+      }
+    },
+    "playlist.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Playlist" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "재생목록" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "プレイリスト" } }
+      }
+    },
+    "playlist.empty" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Playlist is empty" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "재생목록이 비어 있습니다" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "プレイリストは空です" } }
+      }
+    },
+    "settings.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Settings" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "설정" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "設定" } }
+      }
+    },
+    "settings.theme" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Theme" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "테마" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "テーマ" } }
+      }
+    },
+    "settings.theme_system" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "System" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "시스템" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "システム" } }
+      }
+    },
+    "settings.theme_light" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Light" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "라이트" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ライト" } }
+      }
+    },
+    "settings.theme_dark" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Dark" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "다크" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ダーク" } }
+      }
+    },
+    "settings.playback" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Playback" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "재생" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "再生" } }
+      }
+    },
+    "settings.remember_position" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Resume from last position" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "이전 위치에서 이어 재생" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "前回の位置から再開" } }
+      }
+    },
+    "settings.autoload" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Auto-load matching subtitles" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "같은 이름 자막 자동 로드" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "同名の字幕を自動読み込み" } }
+      }
+    },
+    "settings.gestures" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Touch gestures" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "터치 제스처" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "タッチ操作" } }
+      }
+    },
+    "settings.gestures_enabled" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Enable gestures" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "제스처 사용" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ジェスチャーを有効化" } }
+      }
+    },
+    "settings.about" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "About" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "정보" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "情報" } }
+      }
+    },
+    "settings.version" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Version" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "버전" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "バージョン" } }
+      }
+    },
+    "settings.close" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Close" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "닫기" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "閉じる" } }
+      }
+    }
+  }
+}

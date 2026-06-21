@@ -1,0 +1,36 @@
+name: VisualPlayer
+options:
+  bundleIdPrefix: io.github.starfect
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+packages:
+  VLCKit:
+    url: https://code.videolan.org/videolan/VLCKit.git
+    from: "4.0.0a10"
+
+targets:
+  VisualPlayer:
+    type: application
+    platform: iOS
+    sources:
+      - path: VisualPlayer
+    info:
+      path: VisualPlayer/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: VisualPlayer
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+    dependencies:
+      - package: VLCKit
+        product: VLCKit
+    settings:
+      base:
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SWIFT_VERSION: "5.9"
+        GENERATE_INFOPLIST_FILE: NO
+        DEVELOPMENT_TEAM: ""

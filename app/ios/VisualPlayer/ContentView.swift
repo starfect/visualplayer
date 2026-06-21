@@ -1,0 +1,70 @@
+import SwiftUI
+import UniformTypeIdentifiers
+
+struct ContentView: View {
+    @EnvironmentObject var settings: SettingsStore
+    @EnvironmentObject var library: LibraryStore
+    @StateObject private var player = PlayerViewModel()
+
+    @State private var showPlaylist = false
+    @State private var showSettings = false
+    @State private var showImporter = false
+    @State private var controlsVisible = true
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+
+            if library.current != nil {
+                PlayerSurface(renderView: player.renderView).ignoresSafeArea()
+                GestureLayer(player: player, enabled: settings.gesturesEnabled).ignoresSafeArea()
+                if controlsVisible {
+                    PlayerControls(player: player, showPlaylist: $showPlaylist, showSettings: $showSettings)
+                        .transition(.opacity)
+                }
+            } else {
+                emptyState
+            }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture { withAnimation { controlsVisible.toggle() } }
+        .sheet(isPresented: $showPlaylist) { PlaylistView() }
+        .sheet(isPresented: $showSettings) { SettingsView() }
+        .fileImporter(
+            isPresented: $showImporter,
+            allowedContentTypes: [.movie, .audio, .mpeg4Movie, .item],
+            allowsMultipleSelection: true
+        ) { result in
+            if case let .success(urls) = result { importFiles(urls) }
+        }
+        .onChange(of: library.currentIndex) { _ in loadCurrent() }
+        .onAppear {
+            player.onEnded = { [weak library] in library?.onPlaybackEnded() }
+            loadCurrent()
+        }
+    }
+
+    private var emptyState: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "play.circle")
+                .font(.system(size: 64))
+                .foregroundStyle(.white.opacity(0.5))
+            Text("app.drop_hint")
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.white.opacity(0.8))
+            Button { showImporter = true } label: { Text("app.open_file").bold() }
+                .buttonStyle(.borderedProminent)
+        }
+        .padding()
+    }
+
+    private func loadCurrent() {
+        guard let item = library.current else { return }
+        player.load(item, autoloadSubtitles: settings.autoloadSubtitles)
+    }
+
+    private func importFiles(_ urls: [URL]) {
+        let accessible = urls.filter { $0.startAccessingSecurityScopedResource() }
+        library.openMany(accessible.isEmpty ? urls : accessible)
+    }
+}
