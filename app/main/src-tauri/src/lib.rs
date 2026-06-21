@@ -13,18 +13,23 @@ mod net;
 mod player;
 mod playlist;
 mod settings;
+mod sidecar;
 mod subtitle;
 mod system;
+mod tasks;
 mod torrent;
 mod whisper;
 
-use std::sync::Mutex;
+use std::collections::HashMap;
+use std::sync::atomic::AtomicBool;
+use std::sync::{Arc, Mutex};
 
 #[derive(Default)]
 pub struct AppState {
     pub settings: Mutex<vp_core::Settings>,
     pub playlist: Mutex<vp_core::Playlist>,
     pub history: Mutex<vp_core::History>,
+    pub tasks: Mutex<HashMap<String, Arc<AtomicBool>>>,
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

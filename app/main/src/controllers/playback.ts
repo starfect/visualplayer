@@ -1,7 +1,14 @@
 // Playback orchestration across the IPC layer and stores: torrent routing,
 // resume-from-history, progress recording, and playlist navigation.
 
-import { player, playlist, subtitle, torrent as torrentIpc, history as historyIpc } from '../ipc';
+import {
+  player,
+  playlist,
+  subtitle,
+  source as sourceIpc,
+  torrent as torrentIpc,
+  history as historyIpc,
+} from '../ipc';
 import { mpv } from '../ipc/mpv';
 import { playerStore } from '../stores/player';
 import { playlistStore } from '../stores/playlist';
@@ -9,7 +16,7 @@ import { settingsStore } from '../stores/settings';
 import { toast, describeError } from '../ui/toast';
 import { t } from '../i18n';
 
-const isTorrent = (path: string) => path.toLowerCase().endsWith('.torrent');
+const hasExt = (path: string, ext: string) => path.toLowerCase().endsWith(ext);
 
 async function maybeResume(path: string): Promise<void> {
   if (!settingsStore.get().playback.rememberPosition) return;
@@ -29,12 +36,16 @@ export async function openPath(path: string, addToPlaylist = true): Promise<void
     let playable = path;
     let extraSubtitles: string[] = [];
 
-    if (isTorrent(path)) {
+    if (hasExt(path, '.torrent')) {
       toast(t('torrent.loading'));
       const res = await torrentIpc.open(path);
       if (!res.videoPath) throw { code: 'error.not_found' };
       playable = res.videoPath;
       extraSubtitles = res.subtitlePaths;
+    } else if (hasExt(path, '.ytvideo')) {
+      playable = (await sourceIpc.resolveYtVideo(path)).url;
+    } else if (hasExt(path, '.webvideo')) {
+      playable = (await sourceIpc.resolveWebVideo(path)).url;
     }
 
     const source = await player.load(playable);

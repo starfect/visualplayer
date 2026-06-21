@@ -1,9 +1,13 @@
 //! System/utility IPC: background-task control and third-party license listing
 //!.
 
+use std::sync::atomic::Ordering;
+
 use serde::Serialize;
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Manager, State};
 use vp_core::error::{Error, Result};
+
+use crate::AppState;
 
 /// One third-party license entry shown in the in-app "Licenses" screen.
 #[derive(Debug, Clone, Serialize)]
@@ -15,12 +19,16 @@ pub struct LicenseEntry {
     pub text: String,
 }
 
-/// Cancel a running background task (download/convert/whisper) — milestone M3.
+/// Signal a running background task (convert/…) to stop.
 #[tauri::command]
-pub fn task_cancel(_task_id: String) -> Result<()> {
-    Err(Error::NotImplemented(
-        "task cancellation — wired with the first background task (M3)",
-    ))
+pub fn task_cancel(state: State<AppState>, task_id: String) -> Result<()> {
+    match state.tasks.lock().unwrap().get(&task_id) {
+        Some(flag) => {
+            flag.store(true, Ordering::Relaxed);
+            Ok(())
+        }
+        None => Err(Error::NotFound(task_id)),
+    }
 }
 
 /// List bundled third-party licenses from the app resource directory (§18.2).
