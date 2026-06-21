@@ -1,15 +1,15 @@
 //! Canonical catalogue of **stable message codes** shared with the frontend.
 //!
-//! The backend never returns localized prose (BLUEPRINT §6.3): it returns a code
+//! The backend never returns localized prose: it returns a code
 //! from this catalogue, and the frontend i18n layer renders the text. Keeping the
 //! list here lets tests assert that every code the backend can emit has a known,
 //! dotted identifier (and, by convention, a matching key in `en.json`).
 
-/// Default UI language (BLUEPRINT §6.3). Never change away from `en`.
+/// Default UI language. Never change away from `en`.
 pub const DEFAULT_LANGUAGE: &str = "en";
 
 /// Languages with bundled locale files in this build.
-pub const SUPPORTED_LANGUAGES: &[&str] = &["en", "ko"];
+pub const SUPPORTED_LANGUAGES: &[&str] = &["en", "ko", "ja"];
 
 /// Error codes emitted by [`crate::error::Error::code`].
 pub const ERROR_CODES: &[&str] = &[
@@ -22,7 +22,7 @@ pub const ERROR_CODES: &[&str] = &[
     "error.io",
 ];
 
-/// Task/event status codes pushed over `task://*` events (BLUEPRINT §7).
+/// Task/event status codes pushed over `task://*` events.
 pub const TASK_CODES: &[&str] = &[
     "task.queued",
     "task.running",

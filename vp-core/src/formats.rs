@@ -1,8 +1,8 @@
-//! Parsers for VisualPlayer's custom link files (BLUEPRINT §10).
+//! Parsers for VisualPlayer's custom link files.
 //!
 //! Each format accepts a **minimal** form (a single URL line, `#` comments
 //! allowed) and an **extended** TOML form with optional metadata. Contents are
-//! treated strictly as data (BLUEPRINT §17) — nothing here executes anything.
+//! treated strictly as data — nothing here executes anything.
 
 use std::collections::BTreeMap;
 
@@ -68,7 +68,7 @@ pub fn parse_webvideo(content: &str) -> Result<WebVideo> {
 
 /// For `name.ext.torrent`, return the inner media extension hint (`"mp4"`), if any.
 ///
-/// Example: `movie.mp4.torrent` -> `Some("mp4")` (BLUEPRINT §10.1). Returns
+/// Example: `movie.mp4.torrent` -> `Some("mp4")`. Returns
 /// `None` for a plain `name.torrent`.
 pub fn torrent_media_hint(file_name: &str) -> Option<String> {
     let stem = file_name.strip_suffix(".torrent")?;
@@ -80,7 +80,7 @@ pub fn torrent_media_hint(file_name: &str) -> Option<String> {
     }
 }
 
-/// `true` if `url` looks like a YouTube watch/short link (BLUEPRINT §10.2).
+/// `true` if `url` looks like a YouTube watch/short link.
 pub fn is_youtube_url(url: &str) -> bool {
     let u = url.trim().to_ascii_lowercase();
     u.starts_with("https://youtu.be/")

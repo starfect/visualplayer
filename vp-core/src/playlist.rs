@@ -1,4 +1,4 @@
-//! Playlist model and navigation (BLUEPRINT §9.2).
+//! Playlist model and navigation.
 //!
 //! Pure and deterministic: shuffling uses a small seeded xorshift PRNG instead of
 //! `rand`, so navigation order is reproducible and unit-testable.

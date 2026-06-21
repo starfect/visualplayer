@@ -1,4 +1,4 @@
-//! Same-name external subtitle discovery (BLUEPRINT §9.3).
+//! Same-name external subtitle discovery.
 //!
 //! Matching is exposed as a **pure** function over file names so it can be tested
 //! without touching the filesystem; a thin `discover_subtitles` convenience reads
@@ -8,7 +8,7 @@ use std::path::{Path, PathBuf};
 
 use crate::error::{Error, Result};
 
-/// Subtitle extensions recognized for auto-attach (BLUEPRINT §8.2). `.ass/.ssa`
+/// Subtitle extensions recognized for auto-attach. `.ass/.ssa`
 /// and `.srt/.vtt` are first-class; the rest are best-effort via mpv/FFmpeg.
 pub const SUBTITLE_EXTENSIONS: &[&str] = &[
     "srt", "ass", "ssa", "vtt", "sub", "idx", "sup", "smi", "sami", "ttml", "dfxp", "stl", "xml",

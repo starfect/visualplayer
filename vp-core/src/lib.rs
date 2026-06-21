@@ -1,20 +1,23 @@
-//! VisualPlayer core — pure, dependency-light logic shared by the Tauri backend.
+//! VisualPlayer core: pure, dependency-light logic shared by the Tauri backend.
 //!
-//! This crate intentionally has **no `tauri` or `libmpv` dependencies** so it can
-//! be unit-tested in any environment (`cargo test -p vp-core`). It holds the
-//! logic that does not need the playback engine: error types, playlist
-//! management, custom-format parsing, same-name subtitle discovery, settings and
-//! language resolution, and the catalogue of stable i18n message codes.
-//!
-//! See `BLUEPRINT.md` (single source of truth) and `CLAUDE.md`.
+//! No `tauri`/`libmpv` dependencies, so everything here is unit-testable in any
+//! environment (`cargo test -p vp-core`).
 
 pub mod error;
 pub mod formats;
+pub mod history;
 pub mod i18n;
+pub mod media;
 pub mod playlist;
 pub mod settings;
+pub mod shortcuts;
 pub mod subtitle;
+pub mod torrent;
 
 pub use error::{Error, Result};
+pub use history::{History, HistoryEntry};
+pub use media::MediaKind;
 pub use playlist::{Playlist, PlaylistItem, RepeatMode};
 pub use settings::{Settings, Theme};
+pub use shortcuts::{Action, Binding, KeyChord};
+pub use torrent::TorrentPlan;

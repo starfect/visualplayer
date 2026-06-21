@@ -1,6 +1,6 @@
 //! Typed, recoverable error model for VisualPlayer.
 //!
-//! Per BLUEPRINT §6.3/§7/§20, the backend returns **stable message codes** rather
+//! Per the spec§7/§20, the backend returns **stable message codes** rather
 //! than human strings; the frontend i18n layer maps a `code` to a localized
 //! message. Every variant therefore exposes a `code()` and serializes to
 //! `{ "code": "...", "message": "..." }` for the WebView.
