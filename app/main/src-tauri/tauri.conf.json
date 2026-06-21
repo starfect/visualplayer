@@ -30,7 +30,7 @@
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": ["app", "dmg", "deb", "rpm", "appimage"],
     "category": "Video",
     "shortDescription": "Non-profit cross-platform media player",
     "longDescription": "VisualPlayer plays nearly any video/audio format using mpv (libmpv). Non-profit open source.",

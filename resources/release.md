@@ -41,19 +41,20 @@ Pick the asset for your platform from the **Assets** list below.
 
 | Platform | File |
 | --- | --- |
-| Windows 10/11 (x64, Arm64) | `.exe` (NSIS installer) / `.msi` |
+| Windows 10/11 (x64, Arm64) | `VisualPlayer-Setup-*.exe` (custom installer, no NSIS) |
 | macOS (Apple Silicon / Intel) | `.dmg` |
 | Linux (Debian/Ubuntu) | `.deb` |
 | Linux (Fedora/RHEL) | `.rpm` |
 | Linux (portable) | `.AppImage` |
-| Android (arm64 / x86_64) | `.apk` / `.aab` |
+| Android (arm64 / x86_64) | `.apk` |
 
 > iOS is a separate Swift app, built locally with Xcode (not distributed here).
 
 ### Install notes
 
-- **Windows:** run the installer; the WebView2 runtime is installed automatically
-  if missing.
+- **Windows:** run `VisualPlayer-Setup-*.exe`, pick the install folder, shortcuts,
+  and file associations, then click Install. It is a single self-contained
+  installer (no NSIS); uninstall from Add/Remove Programs.
 - **macOS:** open the `.dmg` and drag VisualPlayer to Applications. On first launch,
   right-click → Open (the build may be unsigned).
 - **Linux:** install the `.deb`/`.rpm`, or `chmod +x` the AppImage and run it.

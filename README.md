@@ -40,12 +40,13 @@ Download the asset for your platform from the [latest release](../../releases/la
 
 | Platform | File |
 | --- | --- |
-| Windows 10/11 (x64, Arm64) | `.exe` (NSIS) / `.msi` |
+| Windows 10/11 (x64, Arm64) | `VisualPlayer-Setup-*.exe` (custom installer) |
 | macOS (Apple Silicon / Intel) | `.dmg` |
 | Linux | `.deb` / `.rpm` / `.AppImage` |
-| Android | `.apk` / `.aab` |
+| Android | `.apk` |
 
-- **Windows:** run the installer (WebView2 is fetched automatically if needed).
+- **Windows:** run `VisualPlayer-Setup-*.exe`, choose folder/shortcuts/associations,
+  click Install. Self-contained installer (no NSIS); uninstall from Add/Remove Programs.
 - **macOS:** drag to Applications; first launch → right-click → **Open**.
 - **Linux:** install the package, or `chmod +x *.AppImage && ./VisualPlayer.AppImage`.
   Needs system `libmpv` + WebKitGTK.

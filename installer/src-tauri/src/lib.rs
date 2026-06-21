@@ -6,7 +6,6 @@ mod install;
 
 use std::path::PathBuf;
 
-use tauri::Manager;
 use vp_core::error::{Error, Result};
 
 use install::{InstallInfo, InstallOptions, InstallReport};
@@ -17,13 +16,8 @@ fn installer_info() -> Result<InstallInfo> {
 }
 
 #[tauri::command]
-fn installer_install(app: tauri::AppHandle, options: InstallOptions) -> Result<InstallReport> {
-    let payload = app
-        .path()
-        .resource_dir()
-        .map_err(|e| Error::Io(e.to_string()))?
-        .join("payload");
-    install::install(&payload, &options)
+fn installer_install(options: InstallOptions) -> Result<InstallReport> {
+    install::install(&options)
 }
 
 #[tauri::command]

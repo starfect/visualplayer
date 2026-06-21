@@ -1,12 +1,17 @@
-//! Real install/uninstall logic: copy the payload, create OS shortcuts, register
-//! file types and the Add/Remove entry (Windows), and record a manifest so the
-//! uninstaller can cleanly reverse everything. No NSIS.
+//! Real install/uninstall logic. The VisualPlayer payload is **embedded** in this
+//! binary (`include_dir`), so the installer is a single self-contained executable
+//! with no NSIS. Install extracts the payload, creates OS shortcuts, registers
+//! file types and the Add/Remove entry (Windows), and records a manifest so the
+//! uninstaller can reverse everything.
 
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use include_dir::{include_dir, Dir};
 use serde::{Deserialize, Serialize};
 use vp_core::error::{Error, Result};
+
+static PAYLOAD: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/payload");
 
 pub const APP_NAME: &str = "VisualPlayer";
 pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -74,6 +79,10 @@ fn manifest_path(install_dir: &Path) -> PathBuf {
     install_dir.join(MANIFEST_FILE)
 }
 
+fn count_files(dir: &Dir) -> usize {
+    dir.files().count() + dir.dirs().map(count_files).sum::<usize>()
+}
+
 pub fn info() -> InstallInfo {
     let dir = default_install_dir();
     InstallInfo {
@@ -84,51 +93,17 @@ pub fn info() -> InstallInfo {
     }
 }
 
-fn copy_dir_all(src: &Path, dst: &Path, count: &mut usize) -> Result<()> {
-    fs::create_dir_all(dst)?;
-    for entry in fs::read_dir(src)? {
-        let entry = entry?;
-        let from = entry.path();
-        if from.file_name().and_then(|n| n.to_str()) == Some(MANIFEST_FILE) {
-            continue;
-        }
-        let to = dst.join(entry.file_name());
-        if from.is_dir() {
-            copy_dir_all(&from, &to, count)?;
-        } else {
-            fs::copy(&from, &to)?;
-            *count += 1;
-            #[cfg(unix)]
-            make_executable_if_binary(&to);
-        }
-    }
-    Ok(())
-}
-
-#[cfg(unix)]
-fn make_executable_if_binary(path: &Path) {
-    use std::os::unix::fs::PermissionsExt;
-    if path.file_name().and_then(|n| n.to_str()) == Some(BIN_NAME) {
-        if let Ok(meta) = fs::metadata(path) {
-            let mut perms = meta.permissions();
-            perms.set_mode(0o755);
-            let _ = fs::set_permissions(path, perms);
-        }
-    }
-}
-
-pub fn install(payload_dir: &Path, opts: &InstallOptions) -> Result<InstallReport> {
-    if !payload_dir.exists() {
-        return Err(Error::NotFound(format!(
-            "installer payload not found: {}",
-            payload_dir.display()
-        )));
-    }
+pub fn install(opts: &InstallOptions) -> Result<InstallReport> {
     let target = PathBuf::from(&opts.target_dir);
-    let mut files = 0usize;
-    copy_dir_all(payload_dir, &target, &mut files)?;
+    fs::create_dir_all(&target)?;
+    PAYLOAD
+        .extract(&target)
+        .map_err(|e| Error::Io(e.to_string()))?;
 
     let exe = target.join(BIN_NAME);
+    #[cfg(unix)]
+    make_executable(&exe);
+
     let mut shortcuts = Vec::new();
     if opts.desktop_shortcut || opts.start_menu {
         shortcuts = create_shortcuts(&exe, opts)?;
@@ -147,7 +122,7 @@ pub fn install(payload_dir: &Path, opts: &InstallOptions) -> Result<InstallRepor
 
     Ok(InstallReport {
         install_dir: manifest.install_dir,
-        files,
+        files: count_files(&PAYLOAD),
         shortcuts,
     })
 }
@@ -172,6 +147,16 @@ pub fn uninstall() -> Result<()> {
         fs::remove_dir_all(&install_dir)?;
     }
     Ok(())
+}
+
+#[cfg(unix)]
+fn make_executable(path: &Path) {
+    use std::os::unix::fs::PermissionsExt;
+    if let Ok(meta) = fs::metadata(path) {
+        let mut perms = meta.permissions();
+        perms.set_mode(0o755);
+        let _ = fs::set_permissions(path, perms);
+    }
 }
 
 // ---- Linux ----------------------------------------------------------------

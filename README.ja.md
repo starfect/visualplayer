@@ -39,12 +39,14 @@ VisualPlayer は **mpv（libmpv・内部 FFmpeg）** によりほぼすべての
 
 | プラットフォーム | ファイル |
 | --- | --- |
-| Windows 10/11 (x64, Arm64) | `.exe`(NSIS) / `.msi` |
+| Windows 10/11 (x64, Arm64) | `VisualPlayer-Setup-*.exe`（カスタムインストーラー） |
 | macOS (Apple Silicon / Intel) | `.dmg` |
 | Linux | `.deb` / `.rpm` / `.AppImage` |
-| Android | `.apk` / `.aab` |
+| Android | `.apk` |
 
-- **Windows:** インストーラーを実行（必要に応じて WebView2 を自動取得）。
+- **Windows:** `VisualPlayer-Setup-*.exe` を実行し、フォルダー・ショートカット・
+  ファイル関連付けを選んでインストール。NSIS 不要の単一インストーラーで、
+  アンインストールはプログラムの追加と削除から。
 - **macOS:** アプリケーションへドラッグ。初回は右クリック →**開く**。
 - **Linux:** パッケージを導入、または `chmod +x *.AppImage && ./VisualPlayer.AppImage`。
   システムの `libmpv` と WebKitGTK が必要です。
