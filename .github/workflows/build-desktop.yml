@@ -1,12 +1,16 @@
-# Desktop release build (BLUEPRINT §15). Triggered by version tags. Builds
-# Windows (x64/arm64), macOS (Intel/Apple Silicon), and Linux (deb/rpm/AppImage)
-# via tauri-action. Signing/notarization secrets are wired when publishing.
+# Desktop release build, triggered by the version tags pushed by version.yml.
+# Builds Windows (x64/arm64), macOS (Intel/Apple Silicon), and Linux
+# (deb/rpm/AppImage) and uploads them to the GitHub Release for the tag. Release
+# notes come from resources/release.md.
 name: Build Desktop
 
 on:
   push:
     tags: ['v*']
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -15,13 +19,13 @@ jobs:
       matrix:
         include:
           - platform: macos-latest
-            args: '--target aarch64-apple-darwin'
+            args: '--target aarch64-apple-darwin --features torrent'
           - platform: macos-latest
-            args: '--target x86_64-apple-darwin'
+            args: '--target x86_64-apple-darwin --features torrent'
           - platform: ubuntu-latest
-            args: ''
+            args: '--features torrent'
           - platform: windows-latest
-            args: ''
+            args: '--features torrent'
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
@@ -51,7 +55,17 @@ jobs:
         working-directory: app/main
         run: npm install
 
-      - name: Build the app
+      - name: Read release notes
+        id: notes
+        shell: bash
+        run: |
+          {
+            echo 'body<<RELEASE_EOF'
+            cat resources/release.md
+            echo 'RELEASE_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Build and release
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -59,6 +73,7 @@ jobs:
           projectPath: app/main
           tagName: ${{ github.ref_name }}
           releaseName: 'VisualPlayer ${{ github.ref_name }}'
-          releaseDraft: true
+          releaseBody: ${{ steps.notes.outputs.body }}
+          releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
