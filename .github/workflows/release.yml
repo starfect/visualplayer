@@ -1,0 +1,176 @@
+# Single push-driven release pipeline.
+#
+# A tag pushed by GITHUB_TOKEN does NOT trigger other workflows, so the bump and
+# the platform builds must live in ONE workflow run: the `version` job bumps and
+# pushes the version, then `desktop`/`android` build and upload to the release via
+# `needs` (same run). Triggered by real pushes to main; the bump commit is
+# [skip ci] so it does not re-trigger.
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  version:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.bump.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Count changed files
+        id: count
+        run: |
+          BEFORE='${{ github.event.before }}'
+          if [ -z "$BEFORE" ] || ! git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
+            BEFORE=$(git rev-parse HEAD~1 2>/dev/null || echo "")
+          fi
+          if [ -z "$BEFORE" ]; then
+            N=1
+          else
+            N=$(git diff --name-only "$BEFORE" HEAD | grep -v '^$' | wc -l | tr -d ' ')
+          fi
+          echo "n=$N" >> "$GITHUB_OUTPUT"
+          echo "Changed files: $N"
+      - name: Bump version
+        id: bump
+        run: node scripts/bump-version.mjs "${{ steps.count.outputs.n }}"
+      - name: Commit and push bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/main/package.json Cargo.toml app/main/src-tauri/tauri.conf.json
+          git commit -m "chore(release): v${{ steps.bump.outputs.version }} [skip ci]" || echo "nothing to commit"
+          git push origin HEAD:main
+
+  desktop:
+    needs: version
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest
+            args: '--target aarch64-apple-darwin --features torrent'
+          - platform: macos-latest
+            args: '--target x86_64-apple-darwin --features torrent'
+          - platform: ubuntu-latest
+            args: '--features torrent'
+          - platform: windows-latest
+            args: '--features torrent'
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Install Linux dependencies
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev libmpv-dev \
+            build-essential curl wget file libssl-dev libgtk-3-dev \
+            librsvg2-dev libayatana-appindicator3-dev
+
+      - name: Install macOS dependencies
+        if: matrix.platform == 'macos-latest'
+        run: brew install mpv
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ contains(matrix.args, 'aarch64-apple') && 'aarch64-apple-darwin' || '' }}
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install frontend deps
+        working-directory: app/main
+        run: npm install
+
+      - name: Read release notes
+        id: notes
+        shell: bash
+        run: |
+          {
+            echo 'body<<RELEASE_EOF'
+            cat resources/release.md
+            echo 'RELEASE_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Build and release
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: app/main
+          tagName: v${{ needs.version.outputs.version }}
+          releaseName: 'VisualPlayer v${{ needs.version.outputs.version }}'
+          releaseBody: ${{ steps.notes.outputs.body }}
+          releaseDraft: false
+          prerelease: false
+          args: ${{ matrix.args }}
+
+  android:
+    needs: [version, desktop]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install NDK
+        run: sdkmanager "ndk;26.1.10909125" "platforms;android-34" "build-tools;34.0.0"
+
+      - name: Install frontend deps
+        working-directory: app/main
+        run: npm install
+
+      - name: Build Android APK
+        working-directory: app/main
+        continue-on-error: true
+        env:
+          NDK_HOME: ${{ env.ANDROID_NDK_ROOT }}
+        run: |
+          npm run tauri android init -- --ci
+          npm run tauri android build -- --apk
+
+      - name: Collect artifacts
+        run: |
+          mkdir -p dist-android
+          find app/main/src-tauri/gen/android -name '*.apk' -exec cp {} dist-android/ \; 2>/dev/null || true
+          ls -la dist-android || true
+
+      - name: Upload to release
+        if: hashFiles('dist-android/*') != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.version.outputs.version }}
+          files: dist-android/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
