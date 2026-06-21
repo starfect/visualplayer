@@ -1,0 +1,27 @@
+# Workspace root — refines BLUEPRINT §5 by splitting the backend into a pure
+# core crate (`vp-core`, dependency-free, unit-testable headlessly) and the
+# Tauri binary (`app/main/src-tauri`).
+[workspace]
+resolver = "2"
+members = ["vp-core", "app/main/src-tauri"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+authors = ["starfect"]
+repository = "https://github.com/starfect/visualplayer"
+rust-version = "1.77"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+toml = "1"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true
+panic = "abort"

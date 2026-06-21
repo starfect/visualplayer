@@ -1,0 +1,43 @@
+[package]
+name = "visualplayer"
+description = "VisualPlayer — non-profit cross-platform media player (Tauri shell)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+default-run = "visualplayer"
+
+# The library is the real entry point (shared with the mobile entry point); the
+# binary is a thin wrapper. crate-types are required for Tauri mobile targets.
+[lib]
+name = "visualplayer_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[[bin]]
+name = "visualplayer"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+vp-core = { path = "../../../vp-core" }
+tauri = { version = "2", features = ["macos-private-api"] }
+tauri-plugin-libmpv = "0.3"
+tauri-plugin-os = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
+tauri-plugin-opener = "2"
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+
+[features]
+# Heavy, later-milestone backends are feature-gated so the default build stays
+# lean (BLUEPRINT §19). They are not wired yet — placeholders for M3/M4.
+default = []
+whisper = []
+torrent = []
+convert = []

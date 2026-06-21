@@ -1,0 +1,14 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Minimal capability set for the main window (BLUEPRINT §17). Only the plugins the app actually uses are enabled. Custom app commands are not permission-gated.",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "opener:default",
+    "dialog:default",
+    "fs:default",
+    "os:default",
+    "libmpv:default"
+  ]
+}

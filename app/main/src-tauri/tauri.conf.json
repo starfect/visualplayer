@@ -1,0 +1,81 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "VisualPlayer",
+  "version": "0.1.0",
+  "identifier": "io.github.starfect.visualplayer",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "macOSPrivateApi": true,
+    "windows": [
+      {
+        "label": "main",
+        "title": "VisualPlayer",
+        "width": 1100,
+        "height": 700,
+        "minWidth": 640,
+        "minHeight": 400,
+        "transparent": true,
+        "decorations": true,
+        "dragDropEnabled": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' asset: data:; media-src 'self' asset: http: https:; style-src 'self' 'unsafe-inline'; connect-src 'self' ipc: http://ipc.localhost"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "category": "Video",
+    "shortDescription": "Non-profit cross-platform media player",
+    "longDescription": "VisualPlayer plays nearly any video/audio format using mpv (libmpv). Non-profit open source.",
+    "icon": ["icons/icon.png", "icons/icon.ico"],
+    "resources": ["lib/**/*"],
+    "fileAssociations": [
+      {
+        "ext": [
+          "mp4", "mkv", "avi", "mov", "wmv", "flv", "webm", "m4v", "3gp", "ts",
+          "mts", "m2ts", "mpg", "mpeg", "vob", "ogv", "rm", "rmvb", "asf",
+          "divx", "f4v", "amv", "drc", "qt", "mxf", "nut", "y4m", "dat"
+        ],
+        "name": "VisualPlayer Video",
+        "description": "Video file",
+        "role": "Viewer"
+      },
+      {
+        "ext": [
+          "mp3", "aac", "opus", "ogg", "oga", "wma", "ac3", "eac3", "dts",
+          "flac", "alac", "ape", "wv", "tta", "tak", "wav", "m4a", "mka",
+          "mp2", "amr", "aiff", "aif"
+        ],
+        "name": "VisualPlayer Audio",
+        "description": "Audio file",
+        "role": "Viewer"
+      },
+      {
+        "ext": ["ytvideo"],
+        "name": "VisualPlayer YouTube Link",
+        "description": "VisualPlayer YouTube link file",
+        "role": "Viewer"
+      },
+      {
+        "ext": ["webvideo"],
+        "name": "VisualPlayer Web Link",
+        "description": "VisualPlayer web video link file",
+        "role": "Viewer"
+      },
+      {
+        "ext": ["torrent"],
+        "name": "VisualPlayer Torrent",
+        "description": "Torrent (download-only streaming)",
+        "role": "Viewer"
+      }
+    ]
+  },
+  "plugins": {}
+}
