@@ -1,0 +1,33 @@
+VisualPlayer — distribution notice
+===================================
+
+VisualPlayer's own source code is licensed under Apache License 2.0
+(see LICENSE.md).
+
+However, distributed binaries of VisualPlayer link against and include GPL
+components — notably a full-build FFmpeg (with x264/x265) and/or GPL builds of
+mpv/libmpv. Because these are combined into a single distributed work, the
+combined binary as a whole is distributed under the terms of the
+
+    GNU GENERAL PUBLIC LICENSE, Version 3 (GPLv3)
+
+The full text of the GNU GPLv3 is available at:
+
+    https://www.gnu.org/licenses/gpl-3.0.txt
+
+This project is non-profit and open source. As required by the GPL, the
+"Corresponding Source" for the combined work is made available: it is this
+public repository. A link to obtain the source is shown in the application's
+"Licenses" screen and shipped alongside installed binaries.
+
+Note (per BLUEPRINT §18): GPL does not distinguish profit from non-profit. The
+basis for using GPL components here is our commitment to copyleft (publishing
+source), which this open-source project satisfies. Apache-2.0 is one-way
+compatible with GPLv3; FFmpeg/mpv/x264/x265 are GPLv2-or-later and are therefore
+treated as GPLv3 when combined.
+
+Third-party component licenses are collected in the licenses/ directory and are
+viewable in-app via the "Licenses" screen (the `licenses_list` command).
+
+This notice is general guidance, not legal advice. Review applicable law in your
+jurisdiction before distributing.

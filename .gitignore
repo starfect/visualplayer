@@ -1,0 +1,33 @@
+# Rust
+/target
+**/target
+Cargo.lock.bak
+
+# Node / frontend
+node_modules
+dist
+.vite
+*.tsbuildinfo
+
+# Tauri generated
+app/main/src-tauri/gen
+app/main/src-tauri/target
+
+# Native libs / models (downloaded on demand, not committed)
+app/main/src-tauri/lib/*.dll
+app/main/src-tauri/lib/*.so
+app/main/src-tauri/lib/*.dylib
+*.ggml
+*.bin
+ggml-*.bin
+
+# Sidecar binaries (bundled at build time, not committed)
+app/main/src-tauri/binaries/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/*
+!.vscode/extensions.json
