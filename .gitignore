@@ -3,6 +3,13 @@
 **/target
 Cargo.lock.bak
 
+# Package lock files (intentionally untracked per project policy)
+Cargo.lock
+package-lock.json
+**/package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
 # Node / frontend
 node_modules
 dist
