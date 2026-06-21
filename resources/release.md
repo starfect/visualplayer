@@ -65,7 +65,10 @@ Pick the asset for your platform from the **Assets** list below.
   right-click → Open (the build may be unsigned).
 - **Linux:** install the `.deb`/`.rpm`, or `chmod +x` the AppImage and run it.
   Requires system `libmpv` and WebKitGTK.
-- **Android:** allow installation from the source, then open the `.apk`.
+- **Android:** allow installation from the source, then open the `.apk`. On
+  mobile, playback runs through the device's native media engine (system
+  WebView), so the supported formats are the platform's rather than the full
+  desktop mpv set.
 
 ---
 

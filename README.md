@@ -50,7 +50,8 @@ Download the asset for your platform from the [latest release](../../releases/la
 - **macOS:** drag to Applications; first launch → right-click → **Open**.
 - **Linux:** install the package, or `chmod +x *.AppImage && ./VisualPlayer.AppImage`.
   Needs system `libmpv` + WebKitGTK.
-- **Android:** enable install from source, open the `.apk`.
+- **Android:** enable install from source, open the `.apk`. Mobile playback uses
+  the device's native media engine (desktop uses mpv).
 
 ## Getting started
 

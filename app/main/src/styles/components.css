@@ -8,6 +8,15 @@
   position: absolute;
   inset: 0;
 }
+/* Mobile/browser playback element (desktop renders via libmpv behind the WebView). */
+.html-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
 .dim-overlay {
   position: absolute;
   inset: 0;

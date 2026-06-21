@@ -25,7 +25,6 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 vp-core = { path = "../../../vp-core" }
 tauri = { version = "2", features = ["macos-private-api"] }
-tauri-plugin-libmpv = "0.3"
 tauri-plugin-os = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-fs = "2"
@@ -39,6 +38,12 @@ thiserror = { workspace = true }
 librqbit = { version = "8", optional = true }
 whisper-rs = { version = "0.16", optional = true }
 ureq = { version = "2", optional = true }
+
+# libmpv is the desktop playback engine; it has no mobile backend, so it is a
+# desktop-only dependency. Android/iOS play through the WebView's native media
+# pipeline (an HTML5 <video> transport on the frontend).
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-libmpv = "0.3"
 
 [features]
 default = []

@@ -1,19 +1,10 @@
 // Wrapper over `tauri-plugin-libmpv-api`: low-level mpv transport plus the rich
 // VLC-style control surface (video filters, tracks, A-B loop, media info).
 
-import {
-  init,
-  command,
-  setProperty,
-  getProperty,
-  observeProperties,
-  destroy,
-  type MpvConfig,
-  type MpvFormat,
-  type MpvObservableProperty,
-} from 'tauri-plugin-libmpv-api';
+import type { MpvConfig, MpvFormat, MpvObservableProperty } from 'tauri-plugin-libmpv-api';
 
 import { inTauri } from './env';
+import { selectTransport, type PlaybackTransport } from './transport';
 import { playerStore } from '../stores/player';
 import { chaptersStore } from '../stores/chapters';
 import type { MediaInfo, TrackInfo } from './types';
@@ -66,8 +57,11 @@ function onProp({ name, data }: { name: string; data: unknown }): void {
   }
 }
 
+let transport: PlaybackTransport | null = null;
+
 export async function mpvInit(hwdec: boolean): Promise<void> {
   if (!inTauri) return;
+  transport = await selectTransport();
   const config: MpvConfig = {
     initialOptions: {
       vo: 'gpu-next',
@@ -77,26 +71,25 @@ export async function mpvInit(hwdec: boolean): Promise<void> {
     },
     observedProperties: OBSERVED,
   };
-  await init(config);
-  await observeProperties(OBSERVED, onProp);
+  await transport.init(config, onProp);
 }
 
 export async function mpvDestroy(): Promise<void> {
-  if (inTauri) await destroy();
+  if (transport) await transport.destroy();
 }
 
 async function cmd(name: string, args: (string | number)[] = []): Promise<void> {
-  if (inTauri) await command(name, args);
+  if (transport) await transport.command(name, args);
 }
 
 async function prop(name: string, value: string | number | boolean): Promise<void> {
-  if (inTauri) await setProperty(name, value);
+  if (transport) await transport.setProperty(name, value);
 }
 
 async function getProp<T>(name: string, format: MpvFormat): Promise<T | null> {
-  if (!inTauri) return null;
+  if (!transport) return null;
   try {
-    return (await getProperty(name, format)) as T;
+    return (await transport.getProperty(name, format)) as T;
   } catch {
     return null;
   }

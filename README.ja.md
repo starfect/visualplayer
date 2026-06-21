@@ -50,7 +50,8 @@ VisualPlayer は **mpv（libmpv・内部 FFmpeg）** によりほぼすべての
 - **macOS:** アプリケーションへドラッグ。初回は右クリック →**開く**。
 - **Linux:** パッケージを導入、または `chmod +x *.AppImage && ./VisualPlayer.AppImage`。
   システムの `libmpv` と WebKitGTK が必要です。
-- **Android:** 提供元を許可して `.apk` を開きます。
+- **Android:** 提供元を許可して `.apk` を開きます。モバイル再生は端末のネイティブ
+  メディアエンジンを使用します（デスクトップは mpv）。
 
 ## 使い方
 

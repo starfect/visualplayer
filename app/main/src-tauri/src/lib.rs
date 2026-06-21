@@ -34,12 +34,18 @@ pub struct AppState {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
+    let builder = tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
-        .plugin(tauri_plugin_os::init())
-        .plugin(tauri_plugin_libmpv::init())
+        .plugin(tauri_plugin_os::init());
+
+    // libmpv drives playback on desktop only; mobile uses the WebView's media
+    // pipeline through an HTML5 <video> transport on the frontend.
+    #[cfg(desktop)]
+    let builder = builder.plugin(tauri_plugin_libmpv::init());
+
+    builder
         .manage(AppState::default())
         .setup(|app| {
             use tauri::Manager;
