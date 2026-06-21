@@ -19,6 +19,13 @@ dist
 # Tauri generated
 app/main/src-tauri/gen
 app/main/src-tauri/target
+installer/src-tauri/gen
+installer/src-tauri/target
+installer/dist
+
+# Installer payload (filled at packaging time)
+installer/src-tauri/payload/*
+!installer/src-tauri/payload/README.md
 
 # Native libs / models (downloaded on demand, not committed)
 app/main/src-tauri/lib/*.dll

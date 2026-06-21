@@ -1,0 +1,21 @@
+{
+  "name": "visualplayer-installer",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "VisualPlayer installer/uninstaller frontend (Vite + Vanilla TS).",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "tauri": "tauri"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-dialog": "^2"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "typescript": "^5.6",
+    "vite": "^5"
+  }
+}

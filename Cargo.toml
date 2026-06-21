@@ -1,9 +1,8 @@
-# Workspace root — refines BLUEPRINT §5 by splitting the backend into a pure
-# core crate (`vp-core`, dependency-free, unit-testable headlessly) and the
-# Tauri binary (`app/main/src-tauri`).
+# Workspace root: pure core crate (`vp-core`), the player Tauri app, and the
+# standalone Tauri installer/uninstaller.
 [workspace]
 resolver = "2"
-members = ["vp-core", "app/main/src-tauri"]
+members = ["vp-core", "app/main/src-tauri", "installer/src-tauri"]
 
 [workspace.package]
 version = "1.0.0"
