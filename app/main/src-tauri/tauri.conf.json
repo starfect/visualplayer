@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "VisualPlayer",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "identifier": "io.github.starfect.visualplayer",
   "build": {
     "frontendDist": "../dist",
@@ -34,14 +34,44 @@
     "category": "Video",
     "shortDescription": "Non-profit cross-platform media player",
     "longDescription": "VisualPlayer plays nearly any video/audio format using mpv (libmpv). Non-profit open source.",
-    "icon": ["icons/icon.png", "icons/icon.ico"],
-    "resources": ["lib/**/*"],
+    "icon": [
+      "icons/icon.png",
+      "icons/icon.ico"
+    ],
+    "resources": [
+      "lib/**/*"
+    ],
     "fileAssociations": [
       {
         "ext": [
-          "mp4", "mkv", "avi", "mov", "wmv", "flv", "webm", "m4v", "3gp", "ts",
-          "mts", "m2ts", "mpg", "mpeg", "vob", "ogv", "rm", "rmvb", "asf",
-          "divx", "f4v", "amv", "drc", "qt", "mxf", "nut", "y4m", "dat"
+          "mp4",
+          "mkv",
+          "avi",
+          "mov",
+          "wmv",
+          "flv",
+          "webm",
+          "m4v",
+          "3gp",
+          "ts",
+          "mts",
+          "m2ts",
+          "mpg",
+          "mpeg",
+          "vob",
+          "ogv",
+          "rm",
+          "rmvb",
+          "asf",
+          "divx",
+          "f4v",
+          "amv",
+          "drc",
+          "qt",
+          "mxf",
+          "nut",
+          "y4m",
+          "dat"
         ],
         "name": "VisualPlayer Video",
         "description": "Video file",
@@ -49,28 +79,53 @@
       },
       {
         "ext": [
-          "mp3", "aac", "opus", "ogg", "oga", "wma", "ac3", "eac3", "dts",
-          "flac", "alac", "ape", "wv", "tta", "tak", "wav", "m4a", "mka",
-          "mp2", "amr", "aiff", "aif"
+          "mp3",
+          "aac",
+          "opus",
+          "ogg",
+          "oga",
+          "wma",
+          "ac3",
+          "eac3",
+          "dts",
+          "flac",
+          "alac",
+          "ape",
+          "wv",
+          "tta",
+          "tak",
+          "wav",
+          "m4a",
+          "mka",
+          "mp2",
+          "amr",
+          "aiff",
+          "aif"
         ],
         "name": "VisualPlayer Audio",
         "description": "Audio file",
         "role": "Viewer"
       },
       {
-        "ext": ["ytvideo"],
+        "ext": [
+          "ytvideo"
+        ],
         "name": "VisualPlayer YouTube Link",
         "description": "VisualPlayer YouTube link file",
         "role": "Viewer"
       },
       {
-        "ext": ["webvideo"],
+        "ext": [
+          "webvideo"
+        ],
         "name": "VisualPlayer Web Link",
         "description": "VisualPlayer web video link file",
         "role": "Viewer"
       },
       {
-        "ext": ["torrent"],
+        "ext": [
+          "torrent"
+        ],
         "name": "VisualPlayer Torrent",
         "description": "Torrent (download-only streaming)",
         "role": "Viewer"
