@@ -99,6 +99,16 @@ export const assoc = {
   registerDefaults: () => call<string>('assoc_register_default_handler'),
 };
 
+export const whisper = {
+  generate: (mediaPath: string, model?: string, lang?: string) =>
+    call<string>('whisper_generate', { mediaPath, model, lang }),
+  downloadModel: (model?: string) => call<string>('whisper_download_model', { model }),
+};
+
+export const convert = {
+  media: (input: string, targetExt: string) => call<string>('convert_media', { input, targetExt }),
+};
+
 export const system = {
   licenses: () => call<LicenseEntry[]>('licenses_list'),
   cancelTask: (taskId: string) => call<void>('task_cancel', { taskId }),

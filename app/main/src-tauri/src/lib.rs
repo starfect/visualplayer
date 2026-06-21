@@ -73,6 +73,7 @@ pub fn run() {
             torrent::torrent_plan,
             torrent::torrent_open,
             whisper::whisper_generate,
+            whisper::whisper_download_model,
             convert::convert_media,
             system::task_cancel,
             system::licenses_list,

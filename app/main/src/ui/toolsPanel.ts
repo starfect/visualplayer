@@ -1,11 +1,13 @@
 import { video } from '../features/video';
 import { toggleAbLoop, abLoopLabel } from '../features/abloop';
 import { mpv } from '../ipc/mpv';
-import { player } from '../ipc';
+import { player, whisper } from '../ipc';
+import { playerStore } from '../stores/player';
 import { videoStore, type VideoState } from '../stores/video';
 import { uiStore } from '../stores/ui';
 import { h, icon } from './dom';
 import { t } from '../i18n';
+import { toast, describeError } from './toast';
 
 type EqChannel = 'brightness' | 'contrast' | 'gamma' | 'saturation' | 'hue';
 
@@ -120,6 +122,7 @@ export function createToolsPanel(): HTMLElement {
         (d) => void video.nudgeSubDelay(d),
         () => mpv.cycleSubtitle(),
       ),
+      h('div', { class: 'chip-row' }, [chip(t('subtitle.auto_generate'), autoSubtitles)]),
     ]),
     section(t('tools.ab_loop'), [h('div', { class: 'chip-row' }, [abButton, infoBtn]), infoBox]),
   ]);
@@ -138,6 +141,17 @@ export function createToolsPanel(): HTMLElement {
   });
   uiStore.subscribe((ui) => panel.classList.toggle('open', ui.toolsOpen));
   return panel;
+}
+
+async function autoSubtitles(): Promise<void> {
+  const url = playerStore.get().url;
+  if (!url) return;
+  try {
+    await whisper.generate(url);
+    toast(t('task.generating_subtitles', { percent: 0 }));
+  } catch (err) {
+    toast(describeError(err), 'error');
+  }
 }
 
 function delayControls(
