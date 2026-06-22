@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
-"""Inject a release signing config into a Tauri-generated Android build.gradle.kts.
+"""Inject release signing into a Flutter-generated `android/app/build.gradle.kts`.
 
-Idempotent: if the file already loads `keystore.properties`, it is left untouched.
-The signing config reads credentials from `keystore.properties` in the Gradle root
-project at build time, so no secrets are ever written into tracked sources.
+Reads credentials from `key.properties` (Gradle root project) at build time, so
+no secrets are written into tracked sources. Idempotent: if the file already
+loads `key.properties`, it is left untouched.
 
-Usage: android-signing.py <path/to/app/build.gradle.kts>
+Usage: flutter-android-signing.py <android/app/build.gradle.kts>
 """
 
 import re
 import sys
 
-IMPORTS = "import java.io.FileInputStream\nimport java.util.Properties\n"
+IMPORTS = "import java.util.Properties\nimport java.io.FileInputStream\n"
 
 LOADER = (
-    "\nval keystorePropertiesFile = rootProject.file(\"keystore.properties\")\n"
-    "val keystoreProperties = Properties()\n"
+    "\nval keystoreProperties = Properties()\n"
+    "val keystorePropertiesFile = rootProject.file(\"key.properties\")\n"
     "if (keystorePropertiesFile.exists()) {\n"
     "    keystoreProperties.load(FileInputStream(keystorePropertiesFile))\n"
     "}\n\n"
@@ -27,7 +27,7 @@ SIGNING_CONFIGS = (
     "            keyAlias = keystoreProperties[\"keyAlias\"] as String\n"
     "            keyPassword = keystoreProperties[\"keyPassword\"] as String\n"
     "            storeFile = file(keystoreProperties[\"storeFile\"] as String)\n"
-    "            storePassword = keystoreProperties[\"password\"] as String\n"
+    "            storePassword = keystoreProperties[\"storePassword\"] as String\n"
     "        }\n"
     "    }\n"
 )
@@ -36,8 +36,6 @@ RELEASE_SIGNING_LINE = '\n            signingConfig = signingConfigs.getByName("
 
 
 def find_block(text: str, header: str):
-    """Return (open_brace_index, close_brace_index) of the first brace block whose
-    header matches `header`, using brace counting."""
     match = re.search(header, text)
     if not match:
         return None
@@ -58,7 +56,7 @@ def main() -> int:
     with open(path, encoding="utf-8") as handle:
         src = handle.read()
 
-    if "keystore.properties" in src:
+    if "key.properties" in src:
         print("signing config already present; nothing to patch")
         return 0
 
@@ -74,7 +72,8 @@ def main() -> int:
     assert android is not None
     src = src[: android.end()] + SIGNING_CONFIGS + src[android.end() :]
 
-    block = find_block(src, r'getByName\("release"\)\s*\{')
+    # Flutter's release buildType is written as `release {` (Kotlin DSL).
+    block = find_block(src, r'(?m)^\s*release\s*\{')
     if not block:
         print("error: could not find release buildType block", file=sys.stderr)
         return 1

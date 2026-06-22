@@ -67,9 +67,8 @@ Pick the asset for your platform from the **Assets** list below.
   Requires system `libmpv` and WebKitGTK.
 - **Android:** download the `.apk` for your device's ABI (`arm64-v8a` fits
   almost every modern phone), allow installation from the source, then open it.
-  On mobile, playback runs through the device's native media engine (system
-  WebView), so the supported formats are the platform's rather than the full
-  desktop mpv set.
+  Android is a dedicated native app (Flutter + libmpv via media_kit), so it
+  plays the same wide range of formats as the desktop build.
 
 ---
 

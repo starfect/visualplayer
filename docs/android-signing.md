@@ -37,9 +37,13 @@ base64 visualplayer-upload.jks       # macOS
 ## 3. That's it
 
 On the next push to `main`, the `android` job decodes the keystore, writes a
-`keystore.properties`, patches the generated `app/build.gradle.kts` via
-`scripts/android-signing.py`, and produces signed per-ABI release APKs that are
-uploaded to the GitHub release as `VisualPlayer-<version>-<abi>-release.apk`.
+Flutter `android/key.properties`, patches the generated `app/build.gradle.kts`
+via `scripts/flutter-android-signing.py`, and produces signed per-ABI release
+APKs that are uploaded to the GitHub release as
+`VisualPlayer-<version>-<abi>-release.apk`.
 
-Keystore files (`*.jks`, `*.keystore`, `keystore.properties`) are git-ignored and
+Without these secrets the job still builds installable per-ABI release APKs
+(signed with Flutter's debug key), so CI never breaks.
+
+Keystore files (`*.jks`, `*.keystore`, `key.properties`) are git-ignored and
 only ever exist on the CI runner — they are never committed.
