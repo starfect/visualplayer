@@ -128,7 +128,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
           children: [
             Video(controller: _pc.controller, controls: NoVideoControls),
             IgnorePointer(
-              child: Container(color: Colors.black.withOpacity(_dim)),
+              child: Container(color: Colors.black.withValues(alpha: _dim)),
             ),
             AnimatedOpacity(
               opacity: _controlsVisible ? 1 : 0,
