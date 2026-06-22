@@ -21,3 +21,7 @@ key.properties
 # Editor
 *.iml
 .idea/
+
+# Local flutter-create artifacts (platform is generated in CI)
+.metadata
+test/

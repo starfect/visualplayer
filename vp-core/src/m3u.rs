@@ -60,7 +60,10 @@ pub fn serialize(entries: &[M3uEntry]) -> String {
     let mut out = String::from("#EXTM3U\n");
     for entry in entries {
         let title = entry.title.as_deref().unwrap_or("");
-        out.push_str(&format!("#EXTINF:{},{}\n{}\n", entry.duration, title, entry.path));
+        out.push_str(&format!(
+            "#EXTINF:{},{}\n{}\n",
+            entry.duration, title, entry.path
+        ));
     }
     out
 }
