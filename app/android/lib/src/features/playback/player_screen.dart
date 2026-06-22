@@ -5,11 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
-import 'equalizer.dart';
-import 'i18n.dart';
-import 'library.dart';
+import '../equalizer/equalizer.dart';
+import '../../core/i18n.dart';
+import '../../core/models.dart';
+import '../history/history.dart';
 import 'player_controller.dart';
-import 'settings.dart';
+import '../settings/settings.dart';
 
 class PlayerScreen extends StatefulWidget {
   const PlayerScreen({

@@ -2,7 +2,7 @@
 // colour equalizer, and audio/subtitle delay — all mirrored into the video store.
 
 import { mpv } from '../../ipc/mpv';
-import { videoStore, ASPECT_RATIOS, type VideoState } from '../../stores/video';
+import { videoStore, ASPECT_RATIOS, type VideoState } from './store';
 
 type EqChannel = 'brightness' | 'contrast' | 'gamma' | 'saturation' | 'hue';
 

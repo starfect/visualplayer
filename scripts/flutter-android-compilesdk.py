@@ -3,10 +3,14 @@
 
 Newer Flutter plugins (e.g. `flutter_plugin_android_lifecycle`, pulled by
 `media_kit_video`) require consumers to compile against Android API 36, but the
-Flutter SDK default is lower — so plugin modules like `file_picker` fail the AAR
+Flutter SDK default is lower, so plugin modules like `file_picker` fail the AAR
 metadata check. Setting `compileSdk` only on the app does not help; it must be
-applied to every subproject. This appends a root-project `subprojects` hook that
-does so via reflection (compatible across AGP DSL variants).
+applied to every module.
+
+We hook each module's `pluginManager.withPlugin(...)`, which fires when the
+Android Gradle plugin is applied — early enough to override `compileSdk` before
+AGP reads it, and without `afterEvaluate` (Flutter's root forces early
+evaluation, so an `afterEvaluate` hook throws "already evaluated").
 
 Usage: flutter-android-compilesdk.py <android/build.gradle.kts>
 """
@@ -18,23 +22,28 @@ MARKER = "// visualplayer: force compileSdk"
 BLOCK = '''
 // visualplayer: force compileSdk 36 on the app and every plugin module.
 subprojects {
-    afterEvaluate {
-        val androidExtension = project.extensions.findByName("android") ?: return@afterEvaluate
-        runCatching {
-            androidExtension.javaClass.methods
-                .firstOrNull { it.name == "setCompileSdk" && it.parameterTypes.size == 1 }
-                ?.invoke(androidExtension, 36)
-        }
-        runCatching {
-            androidExtension.javaClass.methods
-                .firstOrNull {
-                    it.name == "compileSdkVersion" &&
-                        it.parameterTypes.size == 1 &&
-                        it.parameterTypes[0] == Integer.TYPE
-                }
-                ?.invoke(androidExtension, 36)
+    val sub = this
+    val applyCompileSdk = {
+        val androidExtension = sub.extensions.findByName("android")
+        if (androidExtension != null) {
+            runCatching {
+                androidExtension.javaClass.methods
+                    .firstOrNull { it.name == "setCompileSdk" && it.parameterTypes.size == 1 }
+                    ?.invoke(androidExtension, 36)
+            }
+            runCatching {
+                androidExtension.javaClass.methods
+                    .firstOrNull {
+                        it.name == "compileSdkVersion" &&
+                            it.parameterTypes.size == 1 &&
+                            it.parameterTypes[0] == Integer.TYPE
+                    }
+                    ?.invoke(androidExtension, 36)
+            }
         }
     }
+    sub.pluginManager.withPlugin("com.android.application") { applyCompileSdk() }
+    sub.pluginManager.withPlugin("com.android.library") { applyCompileSdk() }
 }
 '''
 

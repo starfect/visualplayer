@@ -196,7 +196,7 @@ jobs:
           sed -i "s/^version: .*/version: ${ver}+${{ github.run_number }}/" pubspec.yaml
       - name: Generate Android project
         working-directory: app/android
-        run: flutter create --org io.github.starfect --project-name visualplayer --platforms=android .
+        run: flutter create --org dev.starfect --project-name visualplayer --platforms=android .
       - name: Customize Android manifest (label, intent filters)
         run: python3 scripts/flutter-android-manifest.py app/android
       - name: Force compileSdk 36 for all Gradle modules (plugins require it)

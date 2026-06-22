@@ -1,6 +1,6 @@
 name: VisualPlayer
 options:
-  bundleIdPrefix: io.github.starfect
+  bundleIdPrefix: dev.starfect
   deploymentTarget:
     iOS: "16.0"
   createIntermediateGroups: true

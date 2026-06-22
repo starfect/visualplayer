@@ -2,7 +2,7 @@
 
 import { mpv } from '../../ipc/mpv';
 import { playerStore } from '../../stores/player';
-import { videoStore } from '../../stores/video';
+import { videoStore } from '../video/store';
 
 export async function toggleAbLoop(): Promise<void> {
   const { abLoopA, abLoopB } = videoStore.get();

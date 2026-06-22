@@ -16,19 +16,24 @@ from GitHub Actions.
 
 ## Project layout
 
+One feature per folder:
+
 ```
 app/ios/
   project.yml                 XcodeGen spec (generates VisualPlayer.xcodeproj)
   VisualPlayer/
     App.swift                 @main entry, scene + onOpenURL
-    ContentView.swift         Player stage, controls overlay, importers
-    Models/MediaItem.swift    Media item + type classification
-    Stores/LibraryStore.swift Playlist + current selection + repeat/shuffle
-    Services/                 SubtitleFinder, SourceResolver (.webvideo/.ytvideo)
-    Player/                   Engine protocol, AVPlayer & VLC engines, surface,
+    Core/
+      MediaItem.swift         Media item + type classification
+      LibraryStore.swift      Playlist + current selection + repeat/shuffle
+    Features/
+      Home/ContentView.swift  Player stage, controls overlay, importers
+      Playback/               Engine protocol, AVPlayer & VLC engines, surface,
                               controls, gestures, view model
-    Settings/                 SettingsStore + SettingsView
-    Playlist/PlaylistView.swift
+      Subtitles/              SubtitleFinder (same-name discovery)
+      Sources/                SourceResolver (.webvideo/.ytvideo)
+      Playlist/PlaylistView.swift
+      Settings/               SettingsStore + SettingsView
     Resources/                Info.plist, Localizable.xcstrings (EN/KO/JA)
 ```
 

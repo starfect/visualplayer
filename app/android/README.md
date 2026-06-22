@@ -17,16 +17,38 @@ so it decodes nearly any format — the same engine as the desktop build.
 
 ## Project layout
 
+One feature per folder under `lib/src/`:
+
+```
+lib/
+  main.dart                  app entry (MediaKit init)
+  src/
+    app.dart                 MaterialApp, theme, locale
+    core/                    shared, feature-agnostic code
+      i18n.dart
+      models.dart            MediaItem
+    features/
+      home/                  open files, recent list
+      playback/             player_controller + player_screen (controls, gestures, panels)
+      equalizer/             10-band audio EQ
+      subtitles/ … (in playback panels)
+      chapters/ … (in playback panels)
+      history/               resume + recent-files store
+      playlist/              M3U parse/serialize
+      settings/              settings store + screen
+```
+
 Only the Dart sources and `pubspec.yaml` are tracked. The native `android/`
 scaffold is generated in CI with `flutter create`, then the manifest is
-customized (`scripts/flutter-android-manifest.py`) and, when a keystore is
-configured, release signing is wired in (`scripts/flutter-android-signing.py`).
+customized (`scripts/flutter-android-manifest.py`), `compileSdk` is raised for
+all modules (`scripts/flutter-android-compilesdk.py`), and — when a keystore is
+configured — release signing is wired in (`scripts/flutter-android-signing.py`).
 
 ## Build locally
 
 ```sh
 cd app/android
-flutter create --org io.github.starfect --project-name visualplayer --platforms=android .
+flutter create --org dev.starfect --project-name visualplayer --platforms=android .
 flutter pub get
 flutter build apk --release --split-per-abi
 ```

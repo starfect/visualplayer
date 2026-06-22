@@ -4,11 +4,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 
-import 'i18n.dart';
-import 'library.dart';
-import 'player_screen.dart';
-import 'settings.dart';
-import 'settings_screen.dart';
+import '../../core/i18n.dart';
+import '../../core/models.dart';
+import '../playlist/m3u.dart';
+import '../playback/player_screen.dart';
+import '../settings/settings.dart';
+import '../settings/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.history, required this.settings});

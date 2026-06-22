@@ -18,7 +18,7 @@ pub fn assoc_initial_files() -> Result<Vec<String>> {
 }
 
 #[allow(dead_code)]
-const APP_DESKTOP_ID: &str = "io.github.starfect.visualplayer.desktop";
+const APP_DESKTOP_ID: &str = "dev.starfect.visualplayer.desktop";
 
 #[allow(dead_code)]
 const MEDIA_MIME_TYPES: &[&str] = &[
@@ -71,7 +71,7 @@ pub fn assoc_register_default_handler(_app: tauri::AppHandle) -> Result<String> 
         if which("duti") {
             for mime in MEDIA_MIME_TYPES {
                 let _ = std::process::Command::new("duti")
-                    .args(["-s", "io.github.starfect.visualplayer", mime, "all"])
+                    .args(["-s", "dev.starfect.visualplayer", mime, "all"])
                     .status();
             }
             return Ok("assoc.registered".to_string());

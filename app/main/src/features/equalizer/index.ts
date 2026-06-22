@@ -3,7 +3,7 @@
 // `volume`. Gains are in decibels (-20…+20); disabling clears the filter chain.
 
 import { mpv } from '../../ipc/mpv';
-import { equalizerStore, EQ_BANDS } from '../../stores/equalizer';
+import { equalizerStore, EQ_BANDS } from './store';
 
 export interface EqPreset {
   name: string;

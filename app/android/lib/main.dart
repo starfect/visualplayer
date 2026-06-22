@@ -3,8 +3,8 @@ import 'package:media_kit/media_kit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'src/app.dart';
-import 'src/library.dart';
-import 'src/settings.dart';
+import 'src/features/history/history.dart';
+import 'src/features/settings/settings.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

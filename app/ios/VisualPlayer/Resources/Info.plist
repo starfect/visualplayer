@@ -42,8 +42,8 @@
             <string>Owner</string>
             <key>LSItemContentTypes</key>
             <array>
-                <string>io.github.starfect.visualplayer.webvideo</string>
-                <string>io.github.starfect.visualplayer.ytvideo</string>
+                <string>dev.starfect.visualplayer.webvideo</string>
+                <string>dev.starfect.visualplayer.ytvideo</string>
             </array>
         </dict>
     </array>
@@ -51,7 +51,7 @@
     <array>
         <dict>
             <key>UTTypeIdentifier</key>
-            <string>io.github.starfect.visualplayer.webvideo</string>
+            <string>dev.starfect.visualplayer.webvideo</string>
             <key>UTTypeConformsTo</key>
             <array><string>public.plain-text</string></array>
             <key>UTTypeDescription</key>
@@ -64,7 +64,7 @@
         </dict>
         <dict>
             <key>UTTypeIdentifier</key>
-            <string>io.github.starfect.visualplayer.ytvideo</string>
+            <string>dev.starfect.visualplayer.ytvideo</string>
             <key>UTTypeConformsTo</key>
             <array><string>public.plain-text</string></array>
             <key>UTTypeDescription</key>

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'i18n.dart';
+import '../../core/i18n.dart';
 
 /// App settings, persisted with `shared_preferences` and exposed as a
 /// [ChangeNotifier] so widgets can rebuild on change.

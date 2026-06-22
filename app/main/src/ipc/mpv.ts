@@ -6,7 +6,7 @@ import type { MpvConfig, MpvFormat, MpvObservableProperty } from 'tauri-plugin-l
 import { inTauri } from './env';
 import { selectTransport, type PlaybackTransport } from './transport';
 import { playerStore } from '../stores/player';
-import { chaptersStore } from '../stores/chapters';
+import { chaptersStore } from '../features/chapters/store';
 import type { MediaInfo, TrackInfo } from './types';
 
 const OBSERVED = [

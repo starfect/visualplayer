@@ -1,4 +1,4 @@
-import { createStore } from './store';
+import { createStore } from '../../stores/store';
 
 export interface ChaptersState {
   count: number;

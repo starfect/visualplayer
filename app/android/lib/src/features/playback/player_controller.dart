@@ -4,7 +4,7 @@ import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:path/path.dart' as p;
 
-import 'equalizer.dart';
+import '../equalizer/equalizer.dart';
 
 /// Wraps a media_kit [Player] (libmpv) with the VisualPlayer feature surface:
 /// subtitles, the audio equalizer, and chapter navigation. mpv-only features go

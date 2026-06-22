@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'home_screen.dart';
-import 'i18n.dart';
-import 'library.dart';
-import 'settings.dart';
+import 'features/home/home_screen.dart';
+import 'core/i18n.dart';
+import 'features/history/history.dart';
+import 'features/settings/settings.dart';
 
 class VisualPlayerApp extends StatelessWidget {
   const VisualPlayerApp({super.key, required this.settings, required this.history});

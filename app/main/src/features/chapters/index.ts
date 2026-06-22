@@ -3,7 +3,7 @@
 // chapter and chapter count are tracked live via observed mpv properties.
 
 import { mpv } from '../../ipc/mpv';
-import { chaptersStore } from '../../stores/chapters';
+import { chaptersStore } from './store';
 
 export const chapters = {
   next: () => mpv.addChapter(1),
