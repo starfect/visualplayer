@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 
 import '../../core/i18n.dart';
 import '../../core/models.dart';
+import '../history/history.dart';
 import '../playlist/m3u.dart';
 import '../playback/player_screen.dart';
 import '../settings/settings.dart';

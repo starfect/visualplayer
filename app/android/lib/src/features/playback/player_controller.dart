@@ -48,18 +48,23 @@ class PlayerController {
   Future<void> prevChapter() => _command(['add', 'chapter', '-1']);
 
   Future<void> applyEqualizer() async {
-    final platform = player.platform;
-    if (platform is NativePlayer) {
-      await platform.setProperty(
-        'af',
-        eqEnabled ? buildAudioFilter(preamp, gains) : '',
-      );
+    final dynamic platform = player.platform;
+    if (platform == null) return;
+    try {
+      await platform.setProperty('af', eqEnabled ? buildAudioFilter(preamp, gains) : '');
+    } catch (_) {
+      // mpv property unavailable on this platform; ignore.
     }
   }
 
   Future<void> _command(List<String> args) async {
-    final platform = player.platform;
-    if (platform is NativePlayer) await platform.command(args);
+    final dynamic platform = player.platform;
+    if (platform == null) return;
+    try {
+      await platform.command(args);
+    } catch (_) {
+      // mpv command unavailable on this platform; ignore.
+    }
   }
 
   Future<List<String>> _siblingSubtitles(String path) async {
