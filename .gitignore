@@ -38,6 +38,11 @@ ggml-*.bin
 # Sidecar binaries (bundled at build time, not committed)
 app/main/src-tauri/binaries/
 
+# Android signing secrets (provided via CI secrets, never committed)
+*.jks
+*.keystore
+keystore.properties
+
 # OS / editor
 .DS_Store
 Thumbs.db
@@ -45,3 +50,7 @@ Thumbs.db
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# Python
+__pycache__/
+*.pyc

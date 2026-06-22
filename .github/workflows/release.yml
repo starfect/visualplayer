@@ -186,15 +186,40 @@ jobs:
       - name: Install frontend deps
         working-directory: app/main
         run: npm install
-      - name: Build debug APK
+      - name: Build APKs (signed per-ABI release when a keystore is configured)
         working-directory: app/main
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
         run: |
           npm run tauri android init -- --ci
-          npm run tauri android build -- --apk --debug
+          GEN=src-tauri/gen/android
+          if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "Keystore configured — building signed release APKs."
+            echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$GEN/app/keystore.jks"
+            {
+              echo "password=$ANDROID_KEYSTORE_PASSWORD"
+              echo "keyPassword=${ANDROID_KEY_PASSWORD:-$ANDROID_KEYSTORE_PASSWORD}"
+              echo "keyAlias=$ANDROID_KEY_ALIAS"
+              echo "storeFile=keystore.jks"
+            } > "$GEN/keystore.properties"
+            python3 ../../scripts/android-signing.py "$GEN/app/build.gradle.kts"
+            npm run tauri android build -- --apk --split-per-abi
+          else
+            echo "No ANDROID_KEYSTORE_BASE64 secret — building debug APKs."
+            npm run tauri android build -- --apk --split-per-abi --debug
+          fi
       - name: Stage APK assets
         run: |
           mkdir -p dist-android
-          find app/main/src-tauri/gen/android -name '*.apk' -exec cp {} dist-android/ \; 2>/dev/null || true
+          ver='${{ needs.version.outputs.version }}'
+          while IFS= read -r apk; do
+            name="$(basename "$apk")"
+            name="${name#app-}"
+            cp "$apk" "dist-android/VisualPlayer-${ver}-${name}"
+          done < <(find app/main/src-tauri/gen/android -path '*/outputs/apk/*' -name '*.apk')
           ls -la dist-android || true
       - name: Upload APKs
         if: hashFiles('dist-android/*.apk') != ''

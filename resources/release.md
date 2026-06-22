@@ -52,7 +52,7 @@ Pick the asset for your platform from the **Assets** list below.
 | Linux (Debian/Ubuntu) | `.deb` |
 | Linux (Fedora/RHEL) | `.rpm` |
 | Linux (portable) | `.AppImage` |
-| Android (arm64 / x86_64) | `.apk` |
+| Android (per-ABI) | `VisualPlayer-*-arm64-v8a-*.apk` (most phones), also armeabi-v7a / x86 / x86_64 |
 
 > iOS is a separate Swift app, built locally with Xcode (not distributed here).
 
@@ -65,8 +65,9 @@ Pick the asset for your platform from the **Assets** list below.
   right-click → Open (the build may be unsigned).
 - **Linux:** install the `.deb`/`.rpm`, or `chmod +x` the AppImage and run it.
   Requires system `libmpv` and WebKitGTK.
-- **Android:** allow installation from the source, then open the `.apk`. On
-  mobile, playback runs through the device's native media engine (system
+- **Android:** download the `.apk` for your device's ABI (`arm64-v8a` fits
+  almost every modern phone), allow installation from the source, then open it.
+  On mobile, playback runs through the device's native media engine (system
   WebView), so the supported formats are the platform's rather than the full
   desktop mpv set.
 
