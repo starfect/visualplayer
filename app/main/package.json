@@ -1,7 +1,7 @@
 {
   "name": "visualplayer",
   "private": true,
-  "version": "2.2.1",
+  "version": "2.2.2",
   "type": "module",
   "description": "VisualPlayer frontend (Vite + Vanilla TypeScript, no UI framework).",
   "scripts": {
