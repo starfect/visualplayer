@@ -199,9 +199,8 @@ jobs:
         run: flutter create --org io.github.starfect --project-name visualplayer --platforms=android .
       - name: Customize Android manifest (label, intent filters)
         run: python3 scripts/flutter-android-manifest.py app/android
-      - name: Pin Android compileSdk (plugins require 36+)
-        working-directory: app/android
-        run: sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 36/' android/app/build.gradle.kts
+      - name: Force compileSdk 36 for all Gradle modules (plugins require it)
+        run: python3 scripts/flutter-android-compilesdk.py app/android/android/build.gradle.kts
       - name: Configure release signing (when a keystore is set)
         if: ${{ env.ANDROID_KEYSTORE_BASE64 != '' }}
         working-directory: app/android
