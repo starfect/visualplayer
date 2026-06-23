@@ -7,13 +7,24 @@ so it decodes nearly any format — the same engine as the desktop build.
 ## Features
 
 - Plays almost any video/audio format (libmpv/FFmpeg).
+- **Media library** — on-device scan into Video and Audio, browsable by folder,
+  with video thumbnails (no server/network access).
+- **Bottom navigation**: Video · Audio · Browse · Settings.
+- **Rich player**: audio/subtitle **track selection**, **A/V sync** (audio &
+  subtitle delay), real-time **video adjustments** (brightness/contrast/
+  saturation/gamma/hue) + zoom, **aspect-ratio** cycle, **rotation**,
+  **A-B repeat**, **snapshot**, **sleep timer**, **repeat/shuffle**.
 - VLC-style touch gestures: horizontal drag to seek, vertical drag to change
-  volume (right) or brightness (left), double-tap a side to skip ±10 s.
+  volume (right) or brightness (left), double-tap a side to skip ±10 s, and
+  **long-press to fast-forward 2×**.
 - External subtitles (auto-detect siblings of a local file, or pick manually).
 - 10-band audio equalizer with presets (built as an mpv `af` filter).
 - Chapter navigation, playback speed, playlists (incl. `.m3u`/`.m3u8`).
-- Resume from last position, recent-files history.
+- Resume from last position, recent-files history, keep-screen-on.
 - Multilingual UI (English, 한국어, 日本語) and light/dark themes.
+
+> No-server policy: network streams (SMB/FTP/UPnP/DLNA/HLS), cloud, casting and
+> online subtitle search are intentionally excluded.
 
 ## Project layout
 
