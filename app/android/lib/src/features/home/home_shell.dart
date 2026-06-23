@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../core/i18n.dart';
+import '../../core/models.dart';
 import '../history/history.dart';
-import '../library/audio_tab.dart';
+import '../library/library_tab.dart';
 import '../library/media_library.dart';
-import '../library/video_tab.dart';
 import '../settings/settings.dart';
 import '../settings/settings_screen.dart';
 import 'browse_tab.dart';
@@ -27,8 +27,22 @@ class _HomeShellState extends State<HomeShell> {
   @override
   Widget build(BuildContext context) {
     final tabs = <Widget>[
-      VideoTab(library: _library, history: widget.history, settings: widget.settings),
-      AudioTab(library: _library, history: widget.history, settings: widget.settings),
+      LibraryTab(
+        library: _library,
+        kind: MediaKind.video,
+        history: widget.history,
+        settings: widget.settings,
+        grid: true,
+        title: L.t('nav.video'),
+      ),
+      LibraryTab(
+        library: _library,
+        kind: MediaKind.audio,
+        history: widget.history,
+        settings: widget.settings,
+        grid: false,
+        title: L.t('nav.audio'),
+      ),
       BrowseTab(history: widget.history, settings: widget.settings),
       SettingsScreen(settings: widget.settings),
     ];

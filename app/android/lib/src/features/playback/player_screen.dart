@@ -174,6 +174,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
           fit: StackFit.expand,
           children: [
             Video(controller: _pc.controller, controls: NoVideoControls),
+            if (_item.isAudio) _audioBackdrop(),
             IgnorePointer(
               child: Container(color: Colors.black.withValues(alpha: _dim)),
             ),
@@ -184,6 +185,45 @@ class _PlayerScreenState extends State<PlayerScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _audioBackdrop() {
+    return Container(
+      color: Colors.black,
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 180,
+            height: 180,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.tertiary,
+                ],
+              ),
+            ),
+            child: const Icon(Icons.music_note, size: 96, color: Colors.white),
+          ),
+          const SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Text(
+              _item.displayTitle,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(color: Colors.white, fontSize: 18),
+            ),
+          ),
+        ],
       ),
     );
   }

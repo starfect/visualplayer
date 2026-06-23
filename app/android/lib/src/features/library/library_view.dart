@@ -19,6 +19,7 @@ class LibraryView extends StatefulWidget {
     required this.history,
     required this.settings,
     required this.grid,
+    this.folderId,
   });
 
   final MediaLibrary library;
@@ -26,6 +27,9 @@ class LibraryView extends StatefulWidget {
   final History history;
   final Settings settings;
   final bool grid;
+
+  /// When set, shows the items of a single folder instead of the whole library.
+  final String? folderId;
 
   @override
   State<LibraryView> createState() => _LibraryViewState();
@@ -43,7 +47,9 @@ class _LibraryViewState extends State<LibraryView> {
   Future<List<MediaItem>> _load() async {
     final granted = await widget.library.ensurePermission();
     if (!granted) throw _PermissionDenied();
-    return widget.library.all(widget.kind);
+    return widget.folderId != null
+        ? widget.library.folderItems(widget.folderId!, widget.kind)
+        : widget.library.all(widget.kind);
   }
 
   Future<void> _refresh() async {
