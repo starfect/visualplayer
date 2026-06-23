@@ -6,7 +6,9 @@ import 'package:path/path.dart' as p;
 
 import '../../core/i18n.dart';
 import '../../core/models.dart';
+import '../bookmarks/bookmarks.dart';
 import '../history/history.dart';
+import '../playback/audio_handler.dart';
 import '../playback/launch.dart';
 import '../playlist/m3u.dart';
 import '../settings/settings.dart';
@@ -14,10 +16,18 @@ import '../settings/settings.dart';
 /// "Browse" tab: open arbitrary files / playlists with the picker and replay
 /// recent items.
 class BrowseTab extends StatefulWidget {
-  const BrowseTab({super.key, required this.history, required this.settings});
+  const BrowseTab({
+    super.key,
+    required this.history,
+    required this.settings,
+    required this.bookmarks,
+    required this.audioHandler,
+  });
 
   final History history;
   final Settings settings;
+  final Bookmarks bookmarks;
+  final VisualAudioHandler audioHandler;
 
   @override
   State<BrowseTab> createState() => _BrowseTabState();
@@ -40,7 +50,11 @@ class _BrowseTabState extends State<BrowseTab> {
       }
     }
     if (items.isNotEmpty && mounted) {
-      playMedia(context, items, 0, history: widget.history, settings: widget.settings);
+      playMedia(context, items, 0,
+          history: widget.history,
+          settings: widget.settings,
+          bookmarks: widget.bookmarks,
+          audioHandler: widget.audioHandler);
     }
   }
 
@@ -55,7 +69,10 @@ class _BrowseTabState extends State<BrowseTab> {
 
   void _playRecent(String path, String? title) {
     playMedia(context, [MediaItem(path, title: title)], 0,
-        history: widget.history, settings: widget.settings);
+        history: widget.history,
+        settings: widget.settings,
+        bookmarks: widget.bookmarks,
+        audioHandler: widget.audioHandler);
   }
 
   @override

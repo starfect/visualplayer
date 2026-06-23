@@ -19,6 +19,8 @@ dependencies:
   path_provider: ^2.1.0
   photo_manager: ^3.0.0
   wakelock_plus: ^1.2.5
+  audio_service: ^0.18.18
+  simple_pip_mode: ^1.1.0
 
 dev_dependencies:
   flutter_lints: ^4.0.0

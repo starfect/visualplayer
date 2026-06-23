@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 
 import 'core/i18n.dart';
+import 'features/bookmarks/bookmarks.dart';
 import 'features/history/history.dart';
 import 'features/home/home_shell.dart';
+import 'features/playback/audio_handler.dart';
 import 'features/settings/settings.dart';
 
 class VisualPlayerApp extends StatelessWidget {
-  const VisualPlayerApp({super.key, required this.settings, required this.history});
+  const VisualPlayerApp({
+    super.key,
+    required this.settings,
+    required this.history,
+    required this.bookmarks,
+    required this.audioHandler,
+  });
 
   final Settings settings;
   final History history;
+  final Bookmarks bookmarks;
+  final VisualAudioHandler audioHandler;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +40,12 @@ class VisualPlayerApp extends StatelessWidget {
             brightness: Brightness.dark,
             colorSchemeSeed: const Color(0xFF0040FF),
           ),
-          home: HomeShell(history: history, settings: settings),
+          home: HomeShell(
+            history: history,
+            settings: settings,
+            bookmarks: bookmarks,
+            audioHandler: audioHandler,
+          ),
         );
       },
     );

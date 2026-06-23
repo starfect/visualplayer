@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../core/i18n.dart';
 import '../../core/models.dart';
+import '../bookmarks/bookmarks.dart';
 import '../history/history.dart';
+import '../playback/audio_handler.dart';
 import '../settings/settings.dart';
 import 'folders_view.dart';
 import 'library_view.dart';
@@ -17,6 +19,8 @@ class LibraryTab extends StatefulWidget {
     required this.kind,
     required this.history,
     required this.settings,
+    required this.bookmarks,
+    required this.audioHandler,
     required this.grid,
     required this.title,
   });
@@ -25,6 +29,8 @@ class LibraryTab extends StatefulWidget {
   final MediaKind kind;
   final History history;
   final Settings settings;
+  final Bookmarks bookmarks;
+  final VisualAudioHandler audioHandler;
   final bool grid;
   final String title;
 
@@ -54,12 +60,16 @@ class _LibraryTabState extends State<LibraryTab> {
               kind: widget.kind,
               history: widget.history,
               settings: widget.settings,
+              bookmarks: widget.bookmarks,
+              audioHandler: widget.audioHandler,
             )
           : LibraryView(
               library: widget.library,
               kind: widget.kind,
               history: widget.history,
               settings: widget.settings,
+              bookmarks: widget.bookmarks,
+              audioHandler: widget.audioHandler,
               grid: widget.grid,
             ),
     );

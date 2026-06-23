@@ -56,4 +56,28 @@ class Settings extends ChangeNotifier {
     _prefs.setBool(_kResume, value);
     notifyListeners();
   }
+
+  /// Serializes user-facing preferences for a backup file.
+  Map<String, dynamic> toJson() => {
+        _kTheme: _theme.name,
+        _kLanguage: _language,
+        _kResume: _resume,
+      };
+
+  /// Restores preferences from a backup payload, applying each through the
+  /// setters so persistence and listeners stay in sync.
+  void applyJson(Map<String, dynamic> json) {
+    final theme = json[_kTheme] as String?;
+    if (theme != null) {
+      this.theme = switch (theme) {
+        'light' => ThemeMode.light,
+        'dark' => ThemeMode.dark,
+        _ => ThemeMode.system,
+      };
+    }
+    final lang = json[_kLanguage] as String?;
+    if (lang != null) language = lang;
+    final resume = json[_kResume] as bool?;
+    if (resume != null) this.resume = resume;
+  }
 }

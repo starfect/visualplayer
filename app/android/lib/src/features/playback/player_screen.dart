@@ -5,12 +5,16 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:simple_pip_mode/simple_pip.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../equalizer/equalizer.dart';
+import '../../core/format.dart';
 import '../../core/i18n.dart';
 import '../../core/models.dart';
+import '../bookmarks/bookmarks.dart';
 import '../history/history.dart';
+import 'audio_handler.dart';
 import 'options_sheet.dart';
 import 'player_controller.dart';
 import '../settings/settings.dart';
@@ -24,12 +28,16 @@ class PlayerScreen extends StatefulWidget {
     required this.index,
     required this.history,
     required this.settings,
+    required this.bookmarks,
+    required this.audioHandler,
   });
 
   final List<MediaItem> queue;
   final int index;
   final History history;
   final Settings settings;
+  final Bookmarks bookmarks;
+  final VisualAudioHandler audioHandler;
 
   @override
   State<PlayerScreen> createState() => _PlayerScreenState();
@@ -44,6 +52,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   bool _controlsVisible = true;
   double _dim = 0;
   bool _holdingFastForward = false;
+  bool _pipAvailable = false;
   RepeatMode _repeat = RepeatMode.off;
   bool _shuffle = false;
   late int _index;
@@ -52,6 +61,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
   void initState() {
     super.initState();
     _index = widget.index;
+    SimplePip.isPipAvailable.then((value) {
+      if (mounted) setState(() => _pipAvailable = value);
+    });
     WakelockPlus.enable();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
@@ -83,7 +95,20 @@ class _PlayerScreenState extends State<PlayerScreen> {
       final pos = widget.history.resumePosition(_item.path);
       if (pos != null && pos > 1) start = Duration(seconds: pos);
     }
+    widget.audioHandler.attach(
+      _pc.player,
+      id: _item.path,
+      title: _item.displayTitle,
+      onNext: _playNext,
+      onPrevious: _playPrev,
+    );
     await _pc.open(_item.path, start: start);
+    final duration = _pc.player.state.duration;
+    widget.audioHandler.setMetadata(
+      id: _item.path,
+      title: _item.displayTitle,
+      duration: duration > Duration.zero ? duration : null,
+    );
   }
 
   void _record() {
@@ -152,6 +177,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
     _saveTimer?.cancel();
     _sleepTimer?.cancel();
     _completedSub?.cancel();
+    widget.audioHandler.detach();
     WakelockPlus.disable();
     _pc.dispose();
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
@@ -286,6 +312,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                if (_pipAvailable)
+                  _topAction(Icons.picture_in_picture_alt, false, _enterPip),
                 _topAction(Icons.shuffle, _shuffle, () => setState(() => _shuffle = !_shuffle)),
                 _topAction(
                   _repeat == RepeatMode.one ? Icons.repeat_one : Icons.repeat,
@@ -545,7 +573,15 @@ class _PlayerScreenState extends State<PlayerScreen> {
           _pc.toggleAbLoop(_pc.player.state.position);
           Navigator.of(context).pop();
         }),
-        _option(Icons.bookmark, L.t('player.chapters'), () {
+        _option(Icons.bookmark_add, L.t('opt.add_bookmark'), () {
+          Navigator.of(context).pop();
+          _addBookmark();
+        }),
+        _option(Icons.bookmarks, L.t('opt.bookmarks'), () {
+          Navigator.of(context).pop();
+          _showBookmarks();
+        }),
+        _option(Icons.format_list_numbered, L.t('player.chapters'), () {
           Navigator.of(context).pop();
           _showChapters();
         }),
@@ -554,6 +590,47 @@ class _PlayerScreenState extends State<PlayerScreen> {
           Navigator.of(context).pop();
           _showSleepTimer();
         }),
+      ],
+    ));
+  }
+
+  Future<void> _enterPip() async {
+    await SimplePip().enterPipMode(aspectRatio: (16, 9));
+  }
+
+  void _addBookmark() {
+    final position = _pc.player.state.position.inSeconds;
+    widget.bookmarks.add(_item.path, position);
+    _snack('${L.t('bookmark.added')} · ${Format.seconds(position)}');
+  }
+
+  void _showBookmarks() {
+    final marks = widget.bookmarks.forPath(_item.path);
+    if (marks.isEmpty) {
+      _snack(L.t('bookmark.none'));
+      return;
+    }
+    _scrollSheet(Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (final mark in marks)
+          ListTile(
+            leading: const Icon(Icons.bookmark),
+            title: Text(mark.label ?? Format.seconds(mark.position)),
+            subtitle: mark.label != null ? Text(Format.seconds(mark.position)) : null,
+            trailing: IconButton(
+              icon: const Icon(Icons.delete_outline),
+              onPressed: () {
+                widget.bookmarks.remove(_item.path, mark);
+                Navigator.of(context).pop();
+                _showBookmarks();
+              },
+            ),
+            onTap: () {
+              Navigator.of(context).pop();
+              _pc.player.seek(Duration(seconds: mark.position));
+            },
+          ),
       ],
     ));
   }

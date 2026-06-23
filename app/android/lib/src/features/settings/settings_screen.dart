@@ -1,12 +1,41 @@
 import 'package:flutter/material.dart';
 
 import '../../core/i18n.dart';
+import '../backup/backup.dart';
+import '../bookmarks/bookmarks.dart';
+import '../history/history.dart';
 import 'settings.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key, required this.settings});
+  const SettingsScreen({
+    super.key,
+    required this.settings,
+    required this.history,
+    required this.bookmarks,
+  });
 
   final Settings settings;
+  final History history;
+  final Bookmarks bookmarks;
+
+  Future<void> _export(BuildContext context) async {
+    final backup = Backup(settings: settings, history: history, bookmarks: bookmarks);
+    final saved = await backup.export();
+    if (saved != null && context.mounted) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(L.t('backup.exported'))));
+    }
+  }
+
+  Future<void> _import(BuildContext context) async {
+    final backup = Backup(settings: settings, history: history, bookmarks: bookmarks);
+    final ok = await backup.import();
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(L.t(ok ? 'backup.imported' : 'backup.failed')),
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +84,24 @@ class SettingsScreen extends StatelessWidget {
               title: Text(L.t('settings.resume')),
               value: settings.resume,
               onChanged: (v) => settings.resume = v,
+            ),
+            const Divider(),
+            ListTile(
+              dense: true,
+              title: Text(L.t('settings.backup'),
+                  style: Theme.of(context).textTheme.labelLarge),
+            ),
+            ListTile(
+              leading: const Icon(Icons.upload_file),
+              title: Text(L.t('backup.export')),
+              subtitle: Text(L.t('backup.export_hint')),
+              onTap: () => _export(context),
+            ),
+            ListTile(
+              leading: const Icon(Icons.download),
+              title: Text(L.t('backup.import')),
+              subtitle: Text(L.t('backup.import_hint')),
+              onTap: () => _import(context),
             ),
             const Divider(),
             ListTile(

@@ -85,6 +85,19 @@ class History extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Serializes every entry for inclusion in a backup file.
+  List<Map<String, dynamic>> toJson() => _entries.map((e) => e.toJson()).toList();
+
+  /// Replaces all history from a restored backup payload.
+  void replaceAll(List<dynamic> json) {
+    _entries
+      ..clear()
+      ..addAll(json.map((e) => HistoryEntry.fromJson(e as Map<String, dynamic>)));
+    if (_entries.length > _max) _entries.removeRange(_max, _entries.length);
+    _persist();
+    notifyListeners();
+  }
+
   void _persist() {
     _prefs.setString(_key, jsonEncode(_entries.map((e) => e.toJson()).toList()));
   }

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../core/i18n.dart';
 import '../../core/models.dart';
+import '../bookmarks/bookmarks.dart';
 import '../history/history.dart';
+import '../playback/audio_handler.dart';
 import '../settings/settings.dart';
 import 'library_view.dart';
 import 'media_library.dart';
@@ -15,12 +17,16 @@ class FoldersView extends StatefulWidget {
     required this.kind,
     required this.history,
     required this.settings,
+    required this.bookmarks,
+    required this.audioHandler,
   });
 
   final MediaLibrary library;
   final MediaKind kind;
   final History history;
   final Settings settings;
+  final Bookmarks bookmarks;
+  final VisualAudioHandler audioHandler;
 
   @override
   State<FoldersView> createState() => _FoldersViewState();
@@ -51,6 +57,8 @@ class _FoldersViewState extends State<FoldersView> {
             kind: widget.kind,
             history: widget.history,
             settings: widget.settings,
+            bookmarks: widget.bookmarks,
+            audioHandler: widget.audioHandler,
             grid: widget.kind == MediaKind.video,
             folderId: folder.id,
           ),

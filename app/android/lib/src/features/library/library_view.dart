@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../core/format.dart';
 import '../../core/i18n.dart';
 import '../../core/models.dart';
+import '../bookmarks/bookmarks.dart';
 import '../history/history.dart';
+import '../playback/audio_handler.dart';
 import '../playback/launch.dart';
 import '../settings/settings.dart';
 import 'media_library.dart';
@@ -18,6 +20,8 @@ class LibraryView extends StatefulWidget {
     required this.kind,
     required this.history,
     required this.settings,
+    required this.bookmarks,
+    required this.audioHandler,
     required this.grid,
     this.folderId,
   });
@@ -26,6 +30,8 @@ class LibraryView extends StatefulWidget {
   final MediaKind kind;
   final History history;
   final Settings settings;
+  final Bookmarks bookmarks;
+  final VisualAudioHandler audioHandler;
   final bool grid;
 
   /// When set, shows the items of a single folder instead of the whole library.
@@ -60,7 +66,10 @@ class _LibraryViewState extends State<LibraryView> {
 
   void _play(List<MediaItem> items, int index) {
     playMedia(context, items, index,
-        history: widget.history, settings: widget.settings);
+        history: widget.history,
+        settings: widget.settings,
+        bookmarks: widget.bookmarks,
+        audioHandler: widget.audioHandler);
   }
 
   @override

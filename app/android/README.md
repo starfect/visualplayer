@@ -14,6 +14,12 @@ so it decodes nearly any format — the same engine as the desktop build.
   subtitle delay), real-time **video adjustments** (brightness/contrast/
   saturation/gamma/hue) + zoom, **aspect-ratio** cycle, **rotation**,
   **A-B repeat**, **snapshot**, **sleep timer**, **repeat/shuffle**.
+- **Background playback** with a media notification / lock-screen controls
+  (play, pause, skip, seek) via a foreground media session.
+- **Picture-in-Picture** mini-player — pop the video into a floating window.
+- **Bookmarks** — save and jump to positions inside any file.
+- **Backup & restore** — export settings, history and bookmarks to a local
+  JSON file and import it back (no account, no server).
 - VLC-style touch gestures: horizontal drag to seek, vertical drag to change
   volume (right) or brightness (left), double-tap a side to skip ±10 s, and
   **long-press to fast-forward 2×**.
@@ -39,8 +45,11 @@ lib/
       i18n.dart
       models.dart            MediaItem
     features/
-      home/                  open files, recent list
-      playback/             player_controller + player_screen (controls, gestures, panels)
+      home/                  open files, recent list, bottom-nav shell
+      library/               on-device media scan, folders, thumbnails
+      playback/             player_controller + player_screen, audio_handler (media session)
+      bookmarks/             per-file saved positions
+      backup/                local export/import of settings + history + bookmarks
       equalizer/             10-band audio EQ
       subtitles/ … (in playback panels)
       chapters/ … (in playback panels)
@@ -51,9 +60,11 @@ lib/
 
 Only the Dart sources and `pubspec.yaml` are tracked. The native `android/`
 scaffold is generated in CI with `flutter create`, then the manifest is
-customized (`scripts/flutter-android-manifest.py`), `compileSdk` is raised for
-all modules (`scripts/flutter-android-compilesdk.py`), and — when a keystore is
-configured — release signing is wired in (`scripts/flutter-android-signing.py`).
+customized (`scripts/flutter-android-manifest.py`), the `MainActivity` is made
+to host the background media session (`scripts/flutter-android-mainactivity.py`),
+`compileSdk` is raised for all modules (`scripts/flutter-android-compilesdk.py`),
+and — when a keystore is configured — release signing is wired in
+(`scripts/flutter-android-signing.py`).
 
 ## Build locally
 

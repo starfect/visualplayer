@@ -197,8 +197,10 @@ jobs:
       - name: Generate Android project
         working-directory: app/android
         run: flutter create --org dev.starfect --project-name visualplayer --platforms=android .
-      - name: Customize Android manifest (label, intent filters)
+      - name: Customize Android manifest (label, permissions, media session, PiP)
         run: python3 scripts/flutter-android-manifest.py app/android
+      - name: Make MainActivity host the background media session
+        run: python3 scripts/flutter-android-mainactivity.py app/android
       - name: Force compileSdk 36 for all Gradle modules (plugins require it)
         run: python3 scripts/flutter-android-compilesdk.py app/android/android/build.gradle.kts
       - name: Configure release signing (when a keystore is set)
