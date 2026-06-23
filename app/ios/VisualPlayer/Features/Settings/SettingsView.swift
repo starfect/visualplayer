@@ -2,7 +2,12 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var settings: SettingsStore
+    @EnvironmentObject var bookmarks: BookmarkStore
     @Environment(\.dismiss) private var dismiss
+
+    @State private var showExporter = false
+    @State private var showImporter = false
+    @State private var exportDocument = BackupDocument()
 
     var body: some View {
         NavigationStack {
@@ -21,6 +26,20 @@ struct SettingsView: View {
                 Section("settings.gestures") {
                     Toggle("settings.gestures_enabled", isOn: $settings.gesturesEnabled)
                 }
+                Section("settings.backup") {
+                    Button {
+                        exportDocument = BackupService.makeDocument(
+                            settings: settings, bookmarks: bookmarks)
+                        showExporter = true
+                    } label: {
+                        Label("backup.export", systemImage: "square.and.arrow.up")
+                    }
+                    Button {
+                        showImporter = true
+                    } label: {
+                        Label("backup.import", systemImage: "square.and.arrow.down")
+                    }
+                }
                 Section("settings.about") {
                     LabeledContent("settings.version", value: appVersion)
                 }
@@ -29,6 +48,20 @@ struct SettingsView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("settings.close") { dismiss() }
+                }
+            }
+            .fileExporter(
+                isPresented: $showExporter,
+                document: exportDocument,
+                contentType: .json,
+                defaultFilename: "visualplayer-backup"
+            ) { _ in }
+            .fileImporter(
+                isPresented: $showImporter,
+                allowedContentTypes: [.json]
+            ) { result in
+                if case let .success(url) = result {
+                    BackupService.restore(from: url, settings: settings, bookmarks: bookmarks)
                 }
             }
         }

@@ -8,6 +8,7 @@ struct ContentView: View {
 
     @State private var showPlaylist = false
     @State private var showSettings = false
+    @State private var showBookmarks = false
     @State private var showImporter = false
     @State private var controlsVisible = true
 
@@ -19,8 +20,13 @@ struct ContentView: View {
                 PlayerSurface(renderView: player.renderView).ignoresSafeArea()
                 GestureLayer(player: player, enabled: settings.gesturesEnabled).ignoresSafeArea()
                 if controlsVisible {
-                    PlayerControls(player: player, showPlaylist: $showPlaylist, showSettings: $showSettings)
-                        .transition(.opacity)
+                    PlayerControls(
+                        player: player,
+                        showPlaylist: $showPlaylist,
+                        showSettings: $showSettings,
+                        showBookmarks: $showBookmarks
+                    )
+                    .transition(.opacity)
                 }
             } else {
                 emptyState
@@ -30,6 +36,7 @@ struct ContentView: View {
         .onTapGesture { withAnimation { controlsVisible.toggle() } }
         .sheet(isPresented: $showPlaylist) { PlaylistView() }
         .sheet(isPresented: $showSettings) { SettingsView() }
+        .sheet(isPresented: $showBookmarks) { BookmarksView(player: player) }
         .fileImporter(
             isPresented: $showImporter,
             allowedContentTypes: [.movie, .audio, .mpeg4Movie, .item],
@@ -40,6 +47,8 @@ struct ContentView: View {
         .onChange(of: library.currentIndex) { _ in loadCurrent() }
         .onAppear {
             player.onEnded = { [weak library] in library?.onPlaybackEnded() }
+            player.onSkipNext = { [weak library] in library?.advance(by: 1) }
+            player.onSkipPrevious = { [weak library] in library?.advance(by: -1) }
             loadCurrent()
         }
     }

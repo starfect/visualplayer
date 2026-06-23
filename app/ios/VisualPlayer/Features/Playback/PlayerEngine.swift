@@ -16,6 +16,16 @@ protocol PlayerEngine: AnyObject {
     func setVolume(_ volume: Double)
     func addSubtitle(_ url: URL)
     func teardown()
+
+    /// Whether this engine can pop the video out into a floating mini-player.
+    var supportsPictureInPicture: Bool { get }
+    /// Requests entering Picture-in-Picture.
+    func startPictureInPicture()
+}
+
+extension PlayerEngine {
+    var supportsPictureInPicture: Bool { false }
+    func startPictureInPicture() {}
 }
 
 enum EngineFactory {

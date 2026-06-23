@@ -12,6 +12,12 @@ from GitHub Actions.
 - `.webvideo` / `.ytvideo` link files (open in place / share sheet)
 - VLC-style touch gestures: horizontal swipe seeks, vertical swipe sets
   volume (right) or screen brightness (left), double-tap skips ±10s
+- **Background playback** with Now Playing info + Control Center / lock-screen
+  remote controls (play, pause, skip, scrub)
+- **Picture-in-Picture** mini-player (AVKit, native engine)
+- **Bookmarks** — save and jump to positions inside any file
+- **Backup & restore** — export settings + bookmarks to a local JSON file and
+  import it back (no account, no server)
 - Playlist, playback speed, resume, light/dark theme, EN/KO/JA localization
 
 ## Project layout
@@ -26,14 +32,16 @@ app/ios/
     Core/
       MediaItem.swift         Media item + type classification
       LibraryStore.swift      Playlist + current selection + repeat/shuffle
+      BookmarkStore.swift     Per-file saved positions (UserDefaults)
     Features/
       Home/ContentView.swift  Player stage, controls overlay, importers
       Playback/               Engine protocol, AVPlayer & VLC engines, surface,
-                              controls, gestures, view model
+                              controls, gestures, view model, NowPlaying (media
+                              session), BookmarksView
       Subtitles/              SubtitleFinder (same-name discovery)
       Sources/                SourceResolver (.webvideo/.ytvideo)
       Playlist/PlaylistView.swift
-      Settings/               SettingsStore + SettingsView
+      Settings/               SettingsStore, SettingsView, BackupService
     Resources/                Info.plist, Localizable.xcstrings (EN/KO/JA)
 ```
 

@@ -1,4 +1,5 @@
 import AVFoundation
+import AVKit
 import UIKit
 
 final class PlayerLayerView: UIView {
@@ -10,6 +11,7 @@ final class AVPlayerEngine: PlayerEngine {
     let view: UIView
     private let player = AVPlayer()
     private var timeObserver: Any?
+    private var pipController: AVPictureInPictureController?
 
     var onTick: ((Double, Double) -> Void)?
     var onPlayingChange: ((Bool) -> Void)?
@@ -21,6 +23,9 @@ final class AVPlayerEngine: PlayerEngine {
         surface.playerLayer.videoGravity = .resizeAspect
         view = surface
         activateAudioSession()
+        if AVPictureInPictureController.isPictureInPictureSupported() {
+            pipController = AVPictureInPictureController(playerLayer: surface.playerLayer)
+        }
 
         let interval = CMTime(seconds: 0.5, preferredTimescale: 600)
         timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) {
@@ -74,6 +79,12 @@ final class AVPlayerEngine: PlayerEngine {
     func addSubtitle(_ url: URL) {
         // Sidecar subtitles for AVPlayer require an AVMutableComposition; broad
         // subtitle support is provided by the VLC engine.
+    }
+
+    var supportsPictureInPicture: Bool { pipController != nil }
+
+    func startPictureInPicture() {
+        pipController?.startPictureInPicture()
     }
 
     @objc private func playbackEnded() {

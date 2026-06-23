@@ -3,8 +3,10 @@ import SwiftUI
 struct PlayerControls: View {
     @ObservedObject var player: PlayerViewModel
     @EnvironmentObject var library: LibraryStore
+    @EnvironmentObject var bookmarks: BookmarkStore
     @Binding var showPlaylist: Bool
     @Binding var showSettings: Bool
+    @Binding var showBookmarks: Bool
 
     private let rates: [Double] = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0]
 
@@ -37,7 +39,7 @@ struct PlayerControls: View {
                     Button { player.seek(by: 10) } label: { Image(systemName: "goforward.10") }
                     Button { library.advance(by: 1) } label: { Image(systemName: "forward.end.fill") }
                 }
-                HStack {
+                HStack(spacing: 22) {
                     Menu {
                         ForEach(rates, id: \.self) { rate in
                             Button(String(format: "%.2g×", rate)) { player.setRate(rate) }
@@ -46,6 +48,13 @@ struct PlayerControls: View {
                         Label(String(format: "%.2g×", player.rate), systemImage: "speedometer")
                     }
                     Spacer()
+                    Button { addBookmark() } label: { Image(systemName: "bookmark") }
+                    Button { showBookmarks = true } label: { Image(systemName: "bookmark.circle") }
+                    if player.canPictureInPicture {
+                        Button { player.startPictureInPicture() } label: {
+                            Image(systemName: "pip.enter")
+                        }
+                    }
                     Button { showPlaylist = true } label: { Image(systemName: "list.bullet") }
                 }
                 .font(.subheadline)
@@ -54,6 +63,11 @@ struct PlayerControls: View {
             .background(LinearGradient(colors: [.clear, .black.opacity(0.6)], startPoint: .top, endPoint: .bottom))
         }
         .foregroundStyle(.white)
+    }
+
+    private func addBookmark() {
+        guard let url = library.current?.url else { return }
+        bookmarks.add(url, position: player.currentTime)
     }
 
     private func timeString(_ seconds: Double) -> String {

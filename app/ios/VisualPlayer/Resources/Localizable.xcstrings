@@ -120,6 +120,41 @@
         "ko" : { "stringUnit" : { "state" : "translated", "value" : "닫기" } },
         "ja" : { "stringUnit" : { "state" : "translated", "value" : "閉じる" } }
       }
+    },
+    "settings.backup" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Backup & restore" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "백업 및 복원" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "バックアップと復元" } }
+      }
+    },
+    "backup.export" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Export backup" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "백업 내보내기" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "バックアップを書き出す" } }
+      }
+    },
+    "backup.import" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Import backup" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "백업 가져오기" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "バックアップを読み込む" } }
+      }
+    },
+    "bookmark.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Bookmarks" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "북마크" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ブックマーク" } }
+      }
+    },
+    "bookmark.none" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No bookmarks yet" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "북마크가 없습니다" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ブックマークがありません" } }
+      }
     }
   }
 }
