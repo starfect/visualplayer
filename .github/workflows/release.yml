@@ -217,6 +217,7 @@ jobs:
         working-directory: app/android
         run: |
           flutter pub get
+          dart run flutter_launcher_icons
           flutter build apk --release --split-per-abi
       - name: Stage APK assets
         run: |

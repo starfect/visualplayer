@@ -16,9 +16,21 @@ dependencies:
   shared_preferences: ^2.2.2
   file_picker: ^8.1.2
   path: ^1.9.0
+  path_provider: ^2.1.0
+  photo_manager: ^3.0.0
+  wakelock_plus: ^1.2.5
 
 dev_dependencies:
   flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.1
 
 flutter:
   uses-material-design: true
+
+# Launcher icon generated from the shared app.png (run via `dart run
+# flutter_launcher_icons`, which CI invokes after `flutter create`).
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "icon/app.png"
+  min_sdk_android: 21
