@@ -1,16 +1,21 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../equalizer/equalizer.dart';
 import '../../core/i18n.dart';
 import '../../core/models.dart';
 import '../history/history.dart';
+import 'options_sheet.dart';
 import 'player_controller.dart';
 import '../settings/settings.dart';
+
+enum RepeatMode { off, one, all }
 
 class PlayerScreen extends StatefulWidget {
   const PlayerScreen({
@@ -34,14 +39,20 @@ class _PlayerScreenState extends State<PlayerScreen> {
   final PlayerController _pc = PlayerController();
   Timer? _hideTimer;
   Timer? _saveTimer;
+  Timer? _sleepTimer;
+  StreamSubscription<bool>? _completedSub;
   bool _controlsVisible = true;
   double _dim = 0;
+  bool _holdingFastForward = false;
+  RepeatMode _repeat = RepeatMode.off;
+  bool _shuffle = false;
   late int _index;
 
   @override
   void initState() {
     super.initState();
     _index = widget.index;
+    WakelockPlus.enable();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
@@ -50,9 +61,18 @@ class _PlayerScreenState extends State<PlayerScreen> {
     _openCurrent();
     _scheduleHide();
     _saveTimer = Timer.periodic(const Duration(seconds: 10), (_) => _record());
-    _pc.player.stream.completed.listen((done) {
-      if (done) _playNext();
+    _completedSub = _pc.player.stream.completed.listen((done) {
+      if (done) _onCompleted();
     });
+  }
+
+  void _onCompleted() {
+    if (_repeat == RepeatMode.one) {
+      _pc.player.seek(Duration.zero);
+      _pc.player.play();
+    } else {
+      _playNext();
+    }
   }
 
   MediaItem get _item => widget.queue[_index];
@@ -76,10 +96,18 @@ class _PlayerScreenState extends State<PlayerScreen> {
   }
 
   Future<void> _playNext() async {
-    if (_index + 1 < widget.queue.length) {
-      setState(() => _index += 1);
-      await _openCurrent();
+    final count = widget.queue.length;
+    int? next;
+    if (_shuffle && count > 1) {
+      next = (_index + 1 + Random().nextInt(count - 1)) % count;
+    } else if (_index + 1 < count) {
+      next = _index + 1;
+    } else if (_repeat == RepeatMode.all) {
+      next = 0;
     }
+    if (next == null) return;
+    setState(() => _index = next!);
+    await _openCurrent();
   }
 
   Future<void> _playPrev() async {
@@ -87,6 +115,20 @@ class _PlayerScreenState extends State<PlayerScreen> {
       setState(() => _index -= 1);
       await _openCurrent();
     }
+  }
+
+  void _setSleepTimer(Duration? duration) {
+    _sleepTimer?.cancel();
+    if (duration == null) {
+      setState(() => _sleepTimer = null);
+      return;
+    }
+    setState(() {
+      _sleepTimer = Timer(duration, () {
+        _pc.player.pause();
+        if (mounted) setState(() => _sleepTimer = null);
+      });
+    });
   }
 
   void _scheduleHide() {
@@ -108,6 +150,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
     _record();
     _hideTimer?.cancel();
     _saveTimer?.cancel();
+    _sleepTimer?.cancel();
+    _completedSub?.cancel();
+    WakelockPlus.disable();
     _pc.dispose();
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
@@ -123,6 +168,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
         onDoubleTapDown: _onDoubleTap,
         onHorizontalDragUpdate: _onSeekDrag,
         onVerticalDragUpdate: _onVerticalDrag,
+        onLongPressStart: (_) => _setFastForward(true),
+        onLongPressEnd: (_) => _setFastForward(false),
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -166,6 +213,13 @@ class _PlayerScreenState extends State<PlayerScreen> {
     }
   }
 
+  // Hold anywhere to fast-forward at 2x; release to restore the previous rate.
+  void _setFastForward(bool on) {
+    if (on == _holdingFastForward) return;
+    _holdingFastForward = on;
+    _pc.player.setRate(on ? 2.0 : 1.0);
+  }
+
   // ---- Controls ----------------------------------------------------------
   Widget _controls() {
     return Container(
@@ -191,6 +245,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
                     style: const TextStyle(color: Colors.white),
                     overflow: TextOverflow.ellipsis,
                   ),
+                ),
+                _topAction(Icons.shuffle, _shuffle, () => setState(() => _shuffle = !_shuffle)),
+                _topAction(
+                  _repeat == RepeatMode.one ? Icons.repeat_one : Icons.repeat,
+                  _repeat != RepeatMode.off,
+                  _cycleRepeat,
                 ),
               ],
             ),
@@ -264,19 +324,28 @@ class _PlayerScreenState extends State<PlayerScreen> {
           onPressed: _showSubtitles,
         ),
         IconButton(
-          icon: const Icon(Icons.graphic_eq, color: Colors.white),
-          onPressed: _showEqualizer,
-        ),
-        IconButton(
-          icon: const Icon(Icons.bookmark, color: Colors.white),
-          onPressed: _showChapters,
-        ),
-        IconButton(
           icon: const Icon(Icons.speed, color: Colors.white),
           onPressed: _showSpeed,
         ),
+        IconButton(
+          icon: const Icon(Icons.tune, color: Colors.white),
+          onPressed: _showOptions,
+        ),
       ],
     );
+  }
+
+  Widget _topAction(IconData icon, bool active, VoidCallback onPressed) {
+    return IconButton(
+      icon: Icon(icon, color: active ? Theme.of(context).colorScheme.primary : Colors.white),
+      onPressed: onPressed,
+    );
+  }
+
+  void _cycleRepeat() {
+    setState(() {
+      _repeat = RepeatMode.values[(_repeat.index + 1) % RepeatMode.values.length];
+    });
   }
 
   // ---- Panels ------------------------------------------------------------
@@ -289,7 +358,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   }
 
   Future<void> _showSubtitles() async {
-    _sheet(Column(
+    _scrollSheet(Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         ListTile(
@@ -310,8 +379,188 @@ class _PlayerScreenState extends State<PlayerScreen> {
             _pc.disableSubtitle();
           },
         ),
+        if (_pc.subtitleTracks.isNotEmpty) const Divider(),
+        for (final track in _pc.subtitleTracks)
+          ListTile(
+            leading: const Icon(Icons.closed_caption_outlined),
+            title: Text(_trackLabel(track.id, track.title, track.language)),
+            onTap: () {
+              Navigator.of(context).pop();
+              _pc.selectSubtitleTrack(track);
+            },
+          ),
       ],
     ));
+  }
+
+  void _showAudioTracks() {
+    _scrollSheet(Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (final track in _pc.audioTracks)
+          ListTile(
+            leading: const Icon(Icons.audiotrack),
+            title: Text(_trackLabel(track.id, track.title, track.language)),
+            onTap: () {
+              Navigator.of(context).pop();
+              _pc.selectAudioTrack(track);
+            },
+          ),
+      ],
+    ));
+  }
+
+  void _showAdjust() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      isScrollControlled: true,
+      builder: (_) => VideoAdjustSheet(controller: _pc),
+    );
+  }
+
+  void _showDelay({required bool audio}) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      builder: (_) => DelaySheet(
+        title: L.t(audio ? 'opt.audio_delay' : 'opt.subtitle_delay'),
+        initial: audio ? _pc.audioDelay : _pc.subtitleDelay,
+        onChanged: (v) => audio ? _pc.setAudioDelay(v) : _pc.setSubtitleDelay(v),
+      ),
+    );
+  }
+
+  Future<void> _takeSnapshot() async {
+    Navigator.of(context).pop();
+    final path = await _pc.snapshot();
+    _snack(L.t(path != null ? 'opt.snapshot_saved' : 'opt.snapshot_failed'));
+  }
+
+  void _showSleepTimer() {
+    const minutes = [15, 30, 45, 60];
+    _sheet(Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (final m in minutes)
+          ListTile(
+            leading: const Icon(Icons.bedtime),
+            title: Text('$m ${L.t('opt.minutes')}'),
+            onTap: () {
+              Navigator.of(context).pop();
+              _setSleepTimer(Duration(minutes: m));
+              _snack('${L.t('opt.sleep')}: $m ${L.t('opt.minutes')}');
+            },
+          ),
+        if (_sleepTimer != null)
+          ListTile(
+            leading: const Icon(Icons.timer_off),
+            title: Text(L.t('opt.sleep_off')),
+            onTap: () {
+              Navigator.of(context).pop();
+              _setSleepTimer(null);
+            },
+          ),
+      ],
+    ));
+  }
+
+  void _showOptions() {
+    _scrollSheet(Wrap(
+      alignment: WrapAlignment.center,
+      children: [
+        _option(Icons.audiotrack, L.t('opt.audio_track'), () {
+          Navigator.of(context).pop();
+          _showAudioTracks();
+        }),
+        _option(Icons.closed_caption, L.t('opt.subtitle'), () {
+          Navigator.of(context).pop();
+          _showSubtitles();
+        }),
+        _option(Icons.graphic_eq, L.t('player.equalizer'), () {
+          Navigator.of(context).pop();
+          _showEqualizer();
+        }),
+        _option(Icons.tune, L.t('adjust.title'), () {
+          Navigator.of(context).pop();
+          _showAdjust();
+        }),
+        _option(Icons.aspect_ratio, _pc.aspectLabel, () {
+          _pc.cycleAspectRatio();
+          Navigator.of(context).pop();
+        }),
+        _option(Icons.screen_rotation, L.t('opt.rotate'), () {
+          _pc.rotate();
+          Navigator.of(context).pop();
+        }),
+        _option(Icons.multitrack_audio, L.t('opt.audio_delay'), () {
+          Navigator.of(context).pop();
+          _showDelay(audio: true);
+        }),
+        _option(Icons.subtitles, L.t('opt.subtitle_delay'), () {
+          Navigator.of(context).pop();
+          _showDelay(audio: false);
+        }),
+        _option(Icons.repeat_on, _pc.abLoopLabel, () {
+          _pc.toggleAbLoop(_pc.player.state.position);
+          Navigator.of(context).pop();
+        }),
+        _option(Icons.bookmark, L.t('player.chapters'), () {
+          Navigator.of(context).pop();
+          _showChapters();
+        }),
+        _option(Icons.photo_camera, L.t('opt.snapshot'), _takeSnapshot),
+        _option(Icons.bedtime, L.t('opt.sleep'), () {
+          Navigator.of(context).pop();
+          _showSleepTimer();
+        }),
+      ],
+    ));
+  }
+
+  Widget _option(IconData icon, String label, VoidCallback onTap) {
+    return SizedBox(
+      width: 92,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Column(
+            children: [
+              Icon(icon),
+              const SizedBox(height: 6),
+              Text(label,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 12)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _trackLabel(String id, String? title, String? language) {
+    if (id == 'no') return L.t('player.no_subtitle');
+    if (id == 'auto') return L.t('opt.auto');
+    final parts = [title, language].where((s) => s != null && s.isNotEmpty).toList();
+    return parts.isEmpty ? '${L.t('opt.track')} $id' : parts.join(' · ');
+  }
+
+  void _scrollSheet(Widget child) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      isScrollControlled: true,
+      builder: (_) => SafeArea(
+        child: SingleChildScrollView(padding: const EdgeInsets.all(8), child: child),
+      ),
+    );
+  }
+
+  void _snack(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   void _showChapters() {
