@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'features/home/home_screen.dart';
 import 'core/i18n.dart';
 import 'features/history/history.dart';
+import 'features/home/home_shell.dart';
 import 'features/settings/settings.dart';
 
 class VisualPlayerApp extends StatelessWidget {
@@ -30,7 +30,7 @@ class VisualPlayerApp extends StatelessWidget {
             brightness: Brightness.dark,
             colorSchemeSeed: const Color(0xFF0040FF),
           ),
-          home: HomeScreen(history: history, settings: settings),
+          home: HomeShell(history: history, settings: settings),
         );
       },
     );

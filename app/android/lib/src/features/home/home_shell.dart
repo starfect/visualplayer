@@ -1,0 +1,65 @@
+import 'package:flutter/material.dart';
+
+import '../../core/i18n.dart';
+import '../history/history.dart';
+import '../library/audio_tab.dart';
+import '../library/media_library.dart';
+import '../library/video_tab.dart';
+import '../settings/settings.dart';
+import '../settings/settings_screen.dart';
+import 'browse_tab.dart';
+
+/// Root shell with a VLC-style bottom navigation: Video, Audio, Browse, Settings.
+class HomeShell extends StatefulWidget {
+  const HomeShell({super.key, required this.history, required this.settings});
+
+  final History history;
+  final Settings settings;
+
+  @override
+  State<HomeShell> createState() => _HomeShellState();
+}
+
+class _HomeShellState extends State<HomeShell> {
+  final MediaLibrary _library = MediaLibrary();
+  int _index = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final tabs = <Widget>[
+      VideoTab(library: _library, history: widget.history, settings: widget.settings),
+      AudioTab(library: _library, history: widget.history, settings: widget.settings),
+      BrowseTab(history: widget.history, settings: widget.settings),
+      SettingsScreen(settings: widget.settings),
+    ];
+    return Scaffold(
+      body: IndexedStack(index: _index, children: tabs),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _index,
+        onDestinationSelected: (i) => setState(() => _index = i),
+        destinations: [
+          NavigationDestination(
+            icon: const Icon(Icons.video_library_outlined),
+            selectedIcon: const Icon(Icons.video_library),
+            label: L.t('nav.video'),
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.library_music_outlined),
+            selectedIcon: const Icon(Icons.library_music),
+            label: L.t('nav.audio'),
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.folder_outlined),
+            selectedIcon: const Icon(Icons.folder),
+            label: L.t('nav.browse'),
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.settings_outlined),
+            selectedIcon: const Icon(Icons.settings),
+            label: L.t('nav.settings'),
+          ),
+        ],
+      ),
+    );
+  }
+}
