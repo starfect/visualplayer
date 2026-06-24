@@ -1,46 +1,90 @@
+/* Design tokens — VisualPlayer visual refresh.
+   A calm, modern, slightly cinematic system: a single blue brand with a soft
+   accent gradient, layered neutral surfaces, gentle elevation and rounded
+   geometry. Older variable names are kept so existing rules keep working. */
+
 :root {
   --brand: #0040ff;
+  --brand-strong: #0033cc;
+  --brand-soft: rgba(0, 64, 255, 0.12);
   --brand-contrast: #ffffff;
-  --bg: #ffffff;
+  --accent: #6e8bff;
+  --accent-gradient: linear-gradient(135deg, #0040ff 0%, #5a7bff 100%);
+
+  --bg: #f6f7fb;
   --surface: #ffffff;
-  --surface-2: #f2f4f8;
-  --text: #11151c;
-  --muted: #6b7280;
-  --border: #e6e9ef;
+  --surface-2: #eef1f7;
+  --surface-3: #e4e8f1;
+  --text: #0e1320;
+  --muted: #626b7d;
+  --border: #e3e7f0;
+  --border-strong: #d2d8e6;
 
-  --overlay: rgba(0, 0, 0, 0.5);
-  --overlay-strong: rgba(0, 0, 0, 0.72);
+  --overlay: rgba(8, 11, 20, 0.55);
+  --overlay-strong: rgba(8, 11, 20, 0.78);
   --on-overlay: #ffffff;
+  --on-overlay-muted: rgba(255, 255, 255, 0.72);
+  --control-surface: rgba(255, 255, 255, 0.14);
+  --control-surface-hover: rgba(255, 255, 255, 0.24);
 
-  --radius: 10px;
-  --radius-sm: 7px;
-  --transition: 140ms ease;
+  --radius-lg: 18px;
+  --radius: 13px;
+  --radius-sm: 9px;
+  --radius-pill: 999px;
+  --transition: 160ms cubic-bezier(0.2, 0, 0, 1);
+
+  --shadow-1: 0 1px 2px rgba(8, 11, 20, 0.08), 0 1px 3px rgba(8, 11, 20, 0.06);
+  --shadow-2: 0 6px 16px rgba(8, 11, 20, 0.12), 0 2px 6px rgba(8, 11, 20, 0.08);
+  --shadow-pop: 0 18px 48px rgba(8, 11, 20, 0.24);
 
   --font-sans:
     system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
     'Noto Sans KR', 'Noto Sans JP', 'Noto Sans SC', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', Menlo, monospace;
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
   --brand: #5b86ff;
-  --bg: #0c0e12;
-  --surface: #14171d;
-  --surface-2: #1b1f27;
-  --text: #eef1f6;
-  --muted: #9aa3b2;
-  --border: #262b34;
+  --brand-strong: #4f78ff;
+  --brand-soft: rgba(91, 134, 255, 0.16);
+  --accent: #8aa4ff;
+  --accent-gradient: linear-gradient(135deg, #3d6bff 0%, #7a93ff 100%);
+
+  --bg: #0a0c12;
+  --surface: #14171f;
+  --surface-2: #1b1f29;
+  --surface-3: #232836;
+  --text: #eef1f7;
+  --muted: #97a1b4;
+  --border: #262b37;
+  --border-strong: #323948;
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 8px 22px rgba(0, 0, 0, 0.5);
+  --shadow-pop: 0 20px 52px rgba(0, 0, 0, 0.62);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
     --brand: #5b86ff;
-    --bg: #0c0e12;
-    --surface: #14171d;
-    --surface-2: #1b1f27;
-    --text: #eef1f6;
-    --muted: #9aa3b2;
-    --border: #262b34;
+    --brand-strong: #4f78ff;
+    --brand-soft: rgba(91, 134, 255, 0.16);
+    --accent: #8aa4ff;
+    --accent-gradient: linear-gradient(135deg, #3d6bff 0%, #7a93ff 100%);
+
+    --bg: #0a0c12;
+    --surface: #14171f;
+    --surface-2: #1b1f29;
+    --surface-3: #232836;
+    --text: #eef1f7;
+    --muted: #97a1b4;
+    --border: #262b37;
+    --border-strong: #323948;
+
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-2: 0 8px 22px rgba(0, 0, 0, 0.5);
+    --shadow-pop: 0 20px 52px rgba(0, 0, 0, 0.62);
   }
 }

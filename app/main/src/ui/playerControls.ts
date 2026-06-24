@@ -18,6 +18,7 @@ export function createControlBar(): HTMLElement {
     uiStore.update({ [k]: !uiStore.get()[k] });
 
   const playBtn = btn('player.play', 'play', () => void player.togglePause());
+  playBtn.classList.add('play');
   const prevBtn = btn('player.previous', 'prev', () => void playPrev());
   const nextBtn = btn('player.next', 'next', () => void playNext());
   const muteBtn = btn('player.mute', 'volume', () => void player.toggleMute());

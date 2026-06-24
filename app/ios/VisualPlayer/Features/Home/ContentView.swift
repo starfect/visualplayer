@@ -54,15 +54,19 @@ struct ContentView: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "play.circle")
-                .font(.system(size: 64))
-                .foregroundStyle(.white.opacity(0.5))
+        VStack(spacing: 18) {
+            Image(systemName: "play.circle.fill")
+                .font(.system(size: 72))
+                .foregroundStyle(Color.brandGradient)
             Text("app.drop_hint")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.white.opacity(0.8))
-            Button { showImporter = true } label: { Text("app.open_file").bold() }
-                .buttonStyle(.borderedProminent)
+            Button { showImporter = true } label: {
+                Text("app.open_file").bold()
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .clipShape(Capsule())
         }
         .padding()
     }

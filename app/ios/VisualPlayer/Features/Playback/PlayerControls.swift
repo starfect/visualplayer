@@ -22,23 +22,29 @@ struct PlayerControls: View {
 
             Spacer()
 
-            VStack(spacing: 10) {
+            VStack(spacing: 14) {
                 HStack(spacing: 10) {
                     Text(timeString(player.currentTime)).font(.caption.monospacedDigit())
                     Slider(
                         value: Binding(get: { player.currentTime }, set: { player.seek(to: $0) }),
-                        in: 0...max(player.duration, 1))
+                        in: 0...max(player.duration, 1)
+                    )
+                    .tint(.white)
                     Text(timeString(player.duration)).font(.caption.monospacedDigit())
                 }
-                HStack(spacing: 28) {
+                HStack(spacing: 30) {
                     Button { library.advance(by: -1) } label: { Image(systemName: "backward.end.fill") }
                     Button { player.seek(by: -10) } label: { Image(systemName: "gobackward.10") }
                     Button { player.togglePlay() } label: {
-                        Image(systemName: player.isPlaying ? "pause.fill" : "play.fill").font(.largeTitle)
+                        Image(systemName: player.isPlaying ? "pause.fill" : "play.fill")
+                            .font(.title)
+                            .frame(width: 64, height: 64)
+                            .background(.white.opacity(0.16), in: Circle())
                     }
                     Button { player.seek(by: 10) } label: { Image(systemName: "goforward.10") }
                     Button { library.advance(by: 1) } label: { Image(systemName: "forward.end.fill") }
                 }
+                .font(.title3)
                 HStack(spacing: 22) {
                     Menu {
                         ForEach(rates, id: \.self) { rate in

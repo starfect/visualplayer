@@ -12,6 +12,7 @@ struct VisualPlayerApp: App {
                 .environmentObject(settings)
                 .environmentObject(library)
                 .environmentObject(bookmarks)
+                .tint(.brand)
                 .preferredColorScheme(settings.colorScheme)
                 .onOpenURL { url in
                     library.open(url: url)

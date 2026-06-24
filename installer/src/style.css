@@ -1,20 +1,48 @@
+/* VisualPlayer installer — matches the app's refreshed design language:
+   one blue brand with a soft accent gradient, layered surfaces, gentle
+   elevation and rounded geometry. */
+
 :root {
   --brand: #0040ff;
-  --bg: #ffffff;
-  --surface: #f4f6fb;
-  --text: #11151c;
-  --muted: #6b7280;
-  --border: #e6e9ef;
-  --radius: 10px;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+  --brand-strong: #0033cc;
+  --brand-soft: rgba(0, 64, 255, 0.14);
+  --accent-gradient: linear-gradient(135deg, #0040ff 0%, #5a7bff 100%);
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --surface-2: #eef1f7;
+  --text: #0e1320;
+  --muted: #626b7d;
+  --border: #e3e7f0;
+  --border-strong: #d2d8e6;
+  --radius-lg: 18px;
+  --radius: 12px;
+  --radius-sm: 9px;
+  --shadow-1: 0 1px 2px rgba(8, 11, 20, 0.08), 0 1px 3px rgba(8, 11, 20, 0.06);
+  --shadow-2: 0 8px 22px rgba(8, 11, 20, 0.12);
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Noto Sans KR",
+    sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0c0e12;
-    --surface: #161a21;
-    --text: #eef1f6;
-    --muted: #9aa3b2;
-    --border: #262b34;
+    color-scheme: dark;
+    --brand: #5b86ff;
+    --brand-strong: #4f78ff;
+    --brand-soft: rgba(91, 134, 255, 0.18);
+    --accent-gradient: linear-gradient(135deg, #3d6bff 0%, #7a93ff 100%);
+    --bg: #0a0c12;
+    --surface: #14171f;
+    --surface-2: #1b1f29;
+    --text: #eef1f7;
+    --muted: #97a1b4;
+    --border: #262b37;
+    --border-strong: #323948;
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-2: 0 8px 22px rgba(0, 0, 0, 0.5);
   }
 }
 * {
@@ -25,38 +53,44 @@ body {
   background: var(--bg);
   color: var(--text);
   user-select: none;
+  -webkit-font-smoothing: antialiased;
 }
 .wizard {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 22px 24px;
+  padding: 26px 28px;
 }
 .wiz-head {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 13px;
 }
 .logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
   display: grid;
   place-items: center;
   color: #fff;
-  background: linear-gradient(135deg, var(--brand), #67c6f9);
-  font-size: 18px;
+  background: var(--accent-gradient);
+  box-shadow: 0 8px 20px var(--brand-soft);
+  font-size: 19px;
+  font-weight: 700;
 }
 .app-name {
   font-weight: 700;
+  letter-spacing: 0.01em;
 }
 .app-ver {
   font-size: 12px;
   color: var(--muted);
 }
 .step-title {
-  margin: 18px 0 8px;
-  font-size: 20px;
+  margin: 22px 0 8px;
+  font-size: 22px;
+  font-weight: 680;
+  letter-spacing: -0.01em;
 }
 .step-body {
   flex: 1;
@@ -64,24 +98,26 @@ body {
 }
 .step-body p {
   color: var(--muted);
-  line-height: 1.5;
+  line-height: 1.55;
 }
 .license {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 12px;
+  padding: 14px;
   max-height: 180px;
   overflow-y: auto;
   white-space: pre-wrap;
   font-size: 12px;
+  line-height: 1.5;
   color: var(--text);
+  box-shadow: var(--shadow-1);
 }
 .options {
-  margin: 14px 0;
+  margin: 16px 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 .field {
   display: flex;
@@ -90,6 +126,7 @@ body {
 }
 .lbl {
   font-size: 13px;
+  font-weight: 550;
   color: var(--muted);
 }
 .dir-row {
@@ -98,29 +135,51 @@ body {
 }
 .dir {
   flex: 1;
-  padding: 9px 10px;
+  padding: 10px 12px;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--bg);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
   color: var(--text);
   font: inherit;
+  transition: border-color 160ms ease;
+}
+.dir:focus {
+  outline: none;
+  border-color: var(--brand);
 }
 .opt,
 .agree {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   font-size: 14px;
 }
+.opt {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color 160ms ease;
+}
+.opt:hover {
+  border-color: var(--border-strong);
+}
+.opt input,
+.agree input {
+  accent-color: var(--brand);
+  width: 17px;
+  height: 17px;
+}
 .agree {
-  margin-top: 10px;
+  margin-top: 12px;
   font-weight: 600;
 }
 .wiz-foot {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding-top: 16px;
+  padding-top: 18px;
 }
 .spacer {
   flex: 1;
@@ -129,40 +188,58 @@ body {
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text);
-  border-radius: 8px;
-  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  padding: 11px 20px;
   font: inherit;
   font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+.btn:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
 }
 .btn.primary {
   background: var(--brand);
+  background-image: var(--accent-gradient);
   border-color: transparent;
   color: #fff;
+  box-shadow: 0 8px 18px var(--brand-soft);
+}
+.btn.primary:hover:not(:disabled) {
+  background: var(--brand-strong);
 }
 .btn.ghost {
   background: transparent;
+  border-color: transparent;
+  color: var(--muted);
 }
 .btn.danger {
-  background: #b3261e;
+  background: #c5362e;
   border-color: transparent;
   color: #fff;
 }
 .btn:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: default;
 }
 .progress {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  padding-top: 40px;
+  gap: 18px;
+  padding-top: 48px;
   color: var(--muted);
 }
 .spinner {
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   border: 3px solid var(--border);
   border-top-color: var(--brand);
   border-radius: 50%;
@@ -175,28 +252,29 @@ body {
 }
 .big-check,
 .big-x {
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   display: grid;
   place-items: center;
-  font-size: 30px;
+  font-size: 32px;
   color: #fff;
   margin-bottom: 8px;
+  box-shadow: var(--shadow-2);
 }
 .big-check {
-  background: #1a8d4c;
+  background: #1a9d54;
 }
 .big-x {
-  background: #b3261e;
+  background: #c5362e;
 }
 .path {
   display: block;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-family: ui-monospace, monospace;
+  border-radius: var(--radius-sm);
+  padding: 9px 11px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: 12px;
   word-break: break-all;
 }
