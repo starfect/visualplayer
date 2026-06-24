@@ -1,24 +1,26 @@
-/* VisualPlayer installer — matches the app's refreshed design language:
-   one blue brand with a soft accent gradient, layered surfaces, gentle
-   elevation and rounded geometry. */
+/* VisualPlayer installer — "Deep Cinema": a dark, premium wizard with a
+   near-black canvas lit by a soft brand glow, translucent glass cards, a
+   luminous blue accent and generous rounded geometry. */
 
 :root {
-  --brand: #0040ff;
-  --brand-strong: #0033cc;
-  --brand-soft: rgba(0, 64, 255, 0.14);
-  --accent-gradient: linear-gradient(135deg, #0040ff 0%, #5a7bff 100%);
-  --bg: #f6f7fb;
-  --surface: #ffffff;
-  --surface-2: #eef1f7;
-  --text: #0e1320;
-  --muted: #626b7d;
-  --border: #e3e7f0;
-  --border-strong: #d2d8e6;
-  --radius-lg: 18px;
-  --radius: 12px;
-  --radius-sm: 9px;
-  --shadow-1: 0 1px 2px rgba(8, 11, 20, 0.08), 0 1px 3px rgba(8, 11, 20, 0.06);
-  --shadow-2: 0 8px 22px rgba(8, 11, 20, 0.12);
+  color-scheme: dark;
+  --brand: #4d7cff;
+  --brand-strong: #6a92ff;
+  --brand-soft: rgba(77, 124, 255, 0.3);
+  --accent-gradient: linear-gradient(135deg, #4d7cff 0%, #7aa0ff 100%);
+  --glow:
+    0 0 0 1px rgba(77, 124, 255, 0.45), 0 10px 34px rgba(77, 124, 255, 0.4);
+  --bg: #06070a;
+  --surface: rgba(255, 255, 255, 0.05);
+  --surface-2: rgba(255, 255, 255, 0.09);
+  --text: #f3f5fa;
+  --muted: #9aa3b6;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --radius-lg: 20px;
+  --radius: 16px;
+  --radius-sm: 11px;
+  --shadow-2: 0 12px 34px rgba(0, 0, 0, 0.55);
   font-family:
     system-ui,
     -apple-system,
@@ -27,33 +29,21 @@
     "Noto Sans KR",
     sans-serif;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --brand: #5b86ff;
-    --brand-strong: #4f78ff;
-    --brand-soft: rgba(91, 134, 255, 0.18);
-    --accent-gradient: linear-gradient(135deg, #3d6bff 0%, #7a93ff 100%);
-    --bg: #0a0c12;
-    --surface: #14171f;
-    --surface-2: #1b1f29;
-    --text: #eef1f7;
-    --muted: #97a1b4;
-    --border: #262b37;
-    --border-strong: #323948;
-    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
-    --shadow-2: 0 8px 22px rgba(0, 0, 0, 0.5);
-  }
-}
 * {
   box-sizing: border-box;
 }
 body {
   margin: 0;
-  background: var(--bg);
   color: var(--text);
   user-select: none;
   -webkit-font-smoothing: antialiased;
+  background:
+    radial-gradient(
+      120% 80% at 50% -10%,
+      rgba(77, 124, 255, 0.18),
+      transparent 60%
+    ),
+    var(--bg);
 }
 .wizard {
   display: flex;
@@ -67,15 +57,15 @@ body {
   gap: 13px;
 }
 .logo {
-  width: 44px;
-  height: 44px;
-  border-radius: 13px;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
   display: grid;
   place-items: center;
   color: #fff;
   background: var(--accent-gradient);
-  box-shadow: 0 8px 20px var(--brand-soft);
-  font-size: 19px;
+  box-shadow: var(--glow);
+  font-size: 20px;
   font-weight: 700;
 }
 .app-name {
@@ -87,8 +77,8 @@ body {
   color: var(--muted);
 }
 .step-title {
-  margin: 22px 0 8px;
-  font-size: 22px;
+  margin: 24px 0 8px;
+  font-size: 23px;
   font-weight: 680;
   letter-spacing: -0.01em;
 }
@@ -111,7 +101,6 @@ body {
   font-size: 12px;
   line-height: 1.5;
   color: var(--text);
-  box-shadow: var(--shadow-1);
 }
 .options {
   margin: 16px 0;
@@ -135,13 +124,13 @@ body {
 }
 .dir {
   flex: 1;
-  padding: 10px 12px;
+  padding: 11px 13px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--surface);
   color: var(--text);
   font: inherit;
-  transition: border-color 160ms ease;
+  transition: border-color 180ms ease;
 }
 .dir:focus {
   outline: none;
@@ -151,25 +140,28 @@ body {
 .agree {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
   font-size: 14px;
 }
 .opt {
-  padding: 10px 12px;
+  padding: 12px 14px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--surface);
   cursor: pointer;
-  transition: border-color 160ms ease;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease;
 }
 .opt:hover {
   border-color: var(--border-strong);
+  background: var(--surface-2);
 }
 .opt input,
 .agree input {
   accent-color: var(--brand);
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
 }
 .agree {
   margin-top: 12px;
@@ -189,18 +181,20 @@ body {
   background: var(--surface);
   color: var(--text);
   border-radius: var(--radius-sm);
-  padding: 11px 20px;
+  padding: 12px 22px;
   font: inherit;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition:
-    background 160ms ease,
-    border-color 160ms ease,
-    transform 160ms ease;
+    background 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease,
+    filter 180ms ease;
 }
 .btn:hover:not(:disabled) {
   background: var(--surface-2);
+  border-color: var(--border-strong);
 }
 .btn:active:not(:disabled) {
   transform: scale(0.98);
@@ -210,10 +204,10 @@ body {
   background-image: var(--accent-gradient);
   border-color: transparent;
   color: #fff;
-  box-shadow: 0 8px 18px var(--brand-soft);
+  box-shadow: var(--glow);
 }
 .btn.primary:hover:not(:disabled) {
-  background: var(--brand-strong);
+  filter: brightness(1.08);
 }
 .btn.ghost {
   background: transparent;
@@ -221,12 +215,12 @@ body {
   color: var(--muted);
 }
 .btn.danger {
-  background: #c5362e;
+  background: #e0564e;
   border-color: transparent;
   color: #fff;
 }
 .btn:disabled {
-  opacity: 0.45;
+  opacity: 0.4;
   cursor: default;
 }
 .progress {
@@ -238,8 +232,8 @@ body {
   color: var(--muted);
 }
 .spinner {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border: 3px solid var(--border);
   border-top-color: var(--brand);
   border-radius: 50%;
@@ -252,28 +246,33 @@ body {
 }
 .big-check,
 .big-x {
-  width: 60px;
-  height: 60px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   display: grid;
   place-items: center;
-  font-size: 32px;
+  font-size: 34px;
   color: #fff;
   margin-bottom: 8px;
-  box-shadow: var(--shadow-2);
 }
 .big-check {
-  background: #1a9d54;
+  background: #1fb866;
+  box-shadow:
+    0 0 0 1px rgba(31, 184, 102, 0.4),
+    0 10px 30px rgba(31, 184, 102, 0.4);
 }
 .big-x {
-  background: #c5362e;
+  background: #e0564e;
+  box-shadow:
+    0 0 0 1px rgba(224, 86, 78, 0.4),
+    0 10px 30px rgba(224, 86, 78, 0.4);
 }
 .path {
   display: block;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 9px 11px;
+  padding: 10px 12px;
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: 12px;
   word-break: break-all;

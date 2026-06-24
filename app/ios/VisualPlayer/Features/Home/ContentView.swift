@@ -14,7 +14,7 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.cinemaCanvas.ignoresSafeArea()
 
             if library.current != nil {
                 PlayerSurface(renderView: player.renderView).ignoresSafeArea()
@@ -56,8 +56,9 @@ struct ContentView: View {
     private var emptyState: some View {
         VStack(spacing: 18) {
             Image(systemName: "play.circle.fill")
-                .font(.system(size: 72))
+                .font(.system(size: 78))
                 .foregroundStyle(Color.brandGradient)
+                .shadow(color: .brand.opacity(0.6), radius: 28)
             Text("app.drop_hint")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.white.opacity(0.8))

@@ -1,41 +1,47 @@
-/* Design tokens — VisualPlayer visual refresh.
-   A calm, modern, slightly cinematic system: a single blue brand with a soft
-   accent gradient, layered neutral surfaces, gentle elevation and rounded
-   geometry. Older variable names are kept so existing rules keep working. */
+/* Design tokens — "Deep Cinema".
+   A dark-first, cinematic system: near-black canvas, translucent glass panels,
+   a luminous blue accent with a soft glow, and generous rounded geometry. The
+   dark palette is the hero; a clean light palette is kept as a fallback. Older
+   variable names are preserved so existing rules keep working. */
 
 :root {
-  --brand: #0040ff;
-  --brand-strong: #0033cc;
-  --brand-soft: rgba(0, 64, 255, 0.12);
+  color-scheme: dark;
+
+  --brand: #4d7cff;
+  --brand-strong: #6a92ff;
+  --brand-soft: rgba(77, 124, 255, 0.18);
   --brand-contrast: #ffffff;
-  --accent: #6e8bff;
-  --accent-gradient: linear-gradient(135deg, #0040ff 0%, #5a7bff 100%);
+  --accent: #4d7cff;
+  --accent-gradient: linear-gradient(135deg, #4d7cff 0%, #7aa0ff 100%);
+  --glow: 0 0 0 1px rgba(77, 124, 255, 0.45), 0 8px 30px rgba(77, 124, 255, 0.4);
 
-  --bg: #f6f7fb;
-  --surface: #ffffff;
-  --surface-2: #eef1f7;
-  --surface-3: #e4e8f1;
-  --text: #0e1320;
-  --muted: #626b7d;
-  --border: #e3e7f0;
-  --border-strong: #d2d8e6;
+  --bg: #06070a;
+  --surface: rgba(22, 25, 34, 0.72);
+  --surface-2: rgba(255, 255, 255, 0.06);
+  --surface-3: rgba(255, 255, 255, 0.1);
+  --text: #f3f5fa;
+  --muted: #9aa3b6;
+  --border: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.16);
 
-  --overlay: rgba(8, 11, 20, 0.55);
-  --overlay-strong: rgba(8, 11, 20, 0.78);
+  --overlay: rgba(3, 4, 7, 0.55);
+  --overlay-strong: rgba(3, 4, 7, 0.82);
   --on-overlay: #ffffff;
   --on-overlay-muted: rgba(255, 255, 255, 0.72);
-  --control-surface: rgba(255, 255, 255, 0.14);
-  --control-surface-hover: rgba(255, 255, 255, 0.24);
+  --control-surface: rgba(255, 255, 255, 0.12);
+  --control-surface-hover: rgba(255, 255, 255, 0.22);
 
-  --radius-lg: 18px;
-  --radius: 13px;
-  --radius-sm: 9px;
+  --glass-blur: saturate(1.6) blur(26px);
+
+  --radius-lg: 20px;
+  --radius: 16px;
+  --radius-sm: 11px;
   --radius-pill: 999px;
-  --transition: 160ms cubic-bezier(0.2, 0, 0, 1);
+  --transition: 180ms cubic-bezier(0.2, 0, 0, 1);
 
-  --shadow-1: 0 1px 2px rgba(8, 11, 20, 0.08), 0 1px 3px rgba(8, 11, 20, 0.06);
-  --shadow-2: 0 6px 16px rgba(8, 11, 20, 0.12), 0 2px 6px rgba(8, 11, 20, 0.08);
-  --shadow-pop: 0 18px 48px rgba(8, 11, 20, 0.24);
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-2: 0 10px 30px rgba(0, 0, 0, 0.55);
+  --shadow-pop: 0 28px 70px rgba(0, 0, 0, 0.7);
 
   --font-sans:
     system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
@@ -43,48 +49,63 @@
   --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', Menlo, monospace;
 }
 
-:root[data-theme='dark'] {
-  color-scheme: dark;
-  --brand: #5b86ff;
-  --brand-strong: #4f78ff;
-  --brand-soft: rgba(91, 134, 255, 0.16);
-  --accent: #8aa4ff;
-  --accent-gradient: linear-gradient(135deg, #3d6bff 0%, #7a93ff 100%);
+/* Optional clean light palette (opt-in via the theme switcher). */
+:root[data-theme='light'] {
+  color-scheme: light;
+  --brand: #0040ff;
+  --brand-strong: #0033cc;
+  --brand-soft: rgba(0, 64, 255, 0.14);
+  --accent: #0040ff;
+  --accent-gradient: linear-gradient(135deg, #0040ff 0%, #5a7bff 100%);
+  --glow: 0 0 0 1px rgba(0, 64, 255, 0.3), 0 8px 26px rgba(0, 64, 255, 0.28);
 
-  --bg: #0a0c12;
-  --surface: #14171f;
-  --surface-2: #1b1f29;
-  --surface-3: #232836;
-  --text: #eef1f7;
-  --muted: #97a1b4;
-  --border: #262b37;
-  --border-strong: #323948;
+  --bg: #f6f7fb;
+  --surface: rgba(255, 255, 255, 0.82);
+  --surface-2: #eef1f7;
+  --surface-3: #e4e8f1;
+  --text: #0e1320;
+  --muted: #626b7d;
+  --border: #e3e7f0;
+  --border-strong: #d2d8e6;
 
-  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-2: 0 8px 22px rgba(0, 0, 0, 0.5);
-  --shadow-pop: 0 20px 52px rgba(0, 0, 0, 0.62);
+  --overlay: rgba(8, 11, 20, 0.5);
+  --overlay-strong: rgba(8, 11, 20, 0.72);
+  --control-surface: rgba(255, 255, 255, 0.16);
+  --control-surface-hover: rgba(255, 255, 255, 0.26);
+
+  --shadow-1: 0 1px 2px rgba(8, 11, 20, 0.08), 0 1px 3px rgba(8, 11, 20, 0.06);
+  --shadow-2: 0 10px 26px rgba(8, 11, 20, 0.14);
+  --shadow-pop: 0 24px 60px rgba(8, 11, 20, 0.24);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    color-scheme: dark;
-    --brand: #5b86ff;
-    --brand-strong: #4f78ff;
-    --brand-soft: rgba(91, 134, 255, 0.16);
-    --accent: #8aa4ff;
-    --accent-gradient: linear-gradient(135deg, #3d6bff 0%, #7a93ff 100%);
+/* "System" theme still honours a light OS; the default (no preference) stays
+   the cinematic dark. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    color-scheme: light;
+    --brand: #0040ff;
+    --brand-strong: #0033cc;
+    --brand-soft: rgba(0, 64, 255, 0.14);
+    --accent: #0040ff;
+    --accent-gradient: linear-gradient(135deg, #0040ff 0%, #5a7bff 100%);
+    --glow: 0 0 0 1px rgba(0, 64, 255, 0.3), 0 8px 26px rgba(0, 64, 255, 0.28);
 
-    --bg: #0a0c12;
-    --surface: #14171f;
-    --surface-2: #1b1f29;
-    --surface-3: #232836;
-    --text: #eef1f7;
-    --muted: #97a1b4;
-    --border: #262b37;
-    --border-strong: #323948;
+    --bg: #f6f7fb;
+    --surface: rgba(255, 255, 255, 0.82);
+    --surface-2: #eef1f7;
+    --surface-3: #e4e8f1;
+    --text: #0e1320;
+    --muted: #626b7d;
+    --border: #e3e7f0;
+    --border-strong: #d2d8e6;
 
-    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
-    --shadow-2: 0 8px 22px rgba(0, 0, 0, 0.5);
-    --shadow-pop: 0 20px 52px rgba(0, 0, 0, 0.62);
+    --overlay: rgba(8, 11, 20, 0.5);
+    --overlay-strong: rgba(8, 11, 20, 0.72);
+    --control-surface: rgba(255, 255, 255, 0.16);
+    --control-surface-hover: rgba(255, 255, 255, 0.26);
+
+    --shadow-1: 0 1px 2px rgba(8, 11, 20, 0.08), 0 1px 3px rgba(8, 11, 20, 0.06);
+    --shadow-2: 0 10px 26px rgba(8, 11, 20, 0.14);
+    --shadow-pop: 0 24px 60px rgba(8, 11, 20, 0.24);
   }
 }

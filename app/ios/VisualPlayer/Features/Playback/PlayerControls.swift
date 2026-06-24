@@ -38,8 +38,10 @@ struct PlayerControls: View {
                     Button { player.togglePlay() } label: {
                         Image(systemName: player.isPlaying ? "pause.fill" : "play.fill")
                             .font(.title)
-                            .frame(width: 64, height: 64)
-                            .background(.white.opacity(0.16), in: Circle())
+                            .foregroundStyle(.white)
+                            .frame(width: 66, height: 66)
+                            .background(Color.brandGradient, in: Circle())
+                            .shadow(color: .brand.opacity(0.6), radius: 16, y: 4)
                     }
                     Button { player.seek(by: 10) } label: { Image(systemName: "goforward.10") }
                     Button { library.advance(by: 1) } label: { Image(systemName: "forward.end.fill") }

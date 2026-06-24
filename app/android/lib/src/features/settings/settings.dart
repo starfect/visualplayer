@@ -31,10 +31,11 @@ class Settings extends ChangeNotifier {
     switch (_prefs.getString(_kTheme)) {
       case 'light':
         return ThemeMode.light;
-      case 'dark':
-        return ThemeMode.dark;
-      default:
+      case 'system':
         return ThemeMode.system;
+      default:
+        // Deep Cinema is dark-first: default to dark unless the user opts out.
+        return ThemeMode.dark;
     }
   }
 

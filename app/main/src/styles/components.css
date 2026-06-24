@@ -125,12 +125,14 @@
 }
 /* The primary play/pause button reads as the focal control. */
 .buttons-row .icon-btn.play {
-  width: 56px;
-  height: 56px;
-  background: var(--control-surface);
+  width: 58px;
+  height: 58px;
+  background: var(--accent-gradient);
+  color: #fff;
+  box-shadow: var(--glow);
 }
 .buttons-row .icon-btn.play:hover {
-  background: var(--control-surface-hover);
+  filter: brightness(1.08);
 }
 .buttons-row .icon-btn.play .icon svg {
   width: 28px;
@@ -182,10 +184,10 @@
   background-image: var(--accent-gradient);
   color: var(--brand-contrast);
   border-color: transparent;
-  box-shadow: 0 6px 16px var(--brand-soft);
+  box-shadow: var(--glow);
 }
 .btn.primary:hover {
-  background: var(--brand-strong);
+  filter: brightness(1.08);
 }
 .btn.block {
   width: 100%;
@@ -285,12 +287,15 @@ input[type='range']::-moz-range-thumb {
   text-align: center;
   padding: 24px;
   color: var(--on-overlay);
-  background: #000;
+  background:
+    radial-gradient(60% 60% at 50% 38%, rgba(77, 124, 255, 0.16), transparent 70%), #06070a;
 }
 .empty-state .icon svg {
-  width: 52px;
-  height: 52px;
-  opacity: 0.5;
+  width: 56px;
+  height: 56px;
+  opacity: 0.75;
+  color: var(--brand);
+  filter: drop-shadow(0 6px 24px rgba(77, 124, 255, 0.5));
 }
 .empty-state p {
   max-width: 34ch;
@@ -339,6 +344,8 @@ input[type='range']::-moz-range-thumb {
   gap: 16px;
   padding: 18px;
   background: var(--surface);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -419,6 +426,7 @@ input[type='range']::-moz-range-thumb {
   background: var(--brand);
   color: var(--brand-contrast);
   border-color: transparent;
+  box-shadow: 0 4px 16px var(--brand-soft);
 }
 .delay-value {
   min-width: 42px;

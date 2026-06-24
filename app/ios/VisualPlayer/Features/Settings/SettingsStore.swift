@@ -22,7 +22,8 @@ final class SettingsStore: ObservableObject {
     }
 
     init() {
-        theme = AppTheme(rawValue: defaults.string(forKey: Keys.theme) ?? "") ?? .system
+        // Deep Cinema is dark-first: default to dark unless the user opts out.
+        theme = AppTheme(rawValue: defaults.string(forKey: Keys.theme) ?? "") ?? .dark
         rememberPosition = defaults.object(forKey: Keys.remember) as? Bool ?? true
         autoloadSubtitles = defaults.object(forKey: Keys.autoload) as? Bool ?? true
         gesturesEnabled = defaults.object(forKey: Keys.gestures) as? Bool ?? true
