@@ -24,8 +24,24 @@ async function loadSettings(): Promise<Settings> {
 }
 
 async function applyInitialPreferences(s: Settings): Promise<void> {
+  // Playback
   await mpv.setVolume(s.volume);
+  await mpv.setSpeed(s.playback.defaultSpeed);
+  await mpv.setLoopFile(s.playback.loopFile);
+
+  // Video
+  await mpv.setDeinterlace(s.video.deinterlace);
+  if (s.video.aspectRatio && s.video.aspectRatio !== '-1') {
+    await mpv.setAspect(s.video.aspectRatio);
+  }
+  await mpv.setSnapshotFormat(s.video.snapshotFormat);
+
+  // Subtitles
   await mpv.setSubtitleFontSize(s.subtitles.fontSize);
+  await mpv.setSubtitleColor(s.subtitles.color);
+  await mpv.setSubtitleBorderSize(s.subtitles.borderSize);
+  await mpv.setSubtitleBold(s.subtitles.bold);
+  await mpv.setSubtitlePos(s.subtitles.position);
   if (s.subtitles.defaultDelay) await mpv.setSubtitleDelay(s.subtitles.defaultDelay);
 }
 

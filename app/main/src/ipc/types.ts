@@ -40,6 +40,14 @@ export interface PlaybackSettings {
   maxVolume: number;
   autoplayNext: boolean;
   pauseOnMinimize: boolean;
+  loopFile: boolean;
+  defaultSpeed: number;
+}
+
+export interface VideoSettings {
+  aspectRatio: string;
+  deinterlace: boolean;
+  snapshotFormat: string;
 }
 
 export interface SubtitleSettings {
@@ -122,6 +130,7 @@ export interface Settings {
   speed: number;
   maxSimultaneous: number;
   playback: PlaybackSettings;
+  video: VideoSettings;
   subtitles: SubtitleSettings;
   gestures: GestureSettings;
   keybindings: Binding[];

@@ -17,6 +17,13 @@ export const settingsStore = createStore<Settings>({
     maxVolume: 130,
     autoplayNext: true,
     pauseOnMinimize: false,
+    loopFile: false,
+    defaultSpeed: 1,
+  },
+  video: {
+    aspectRatio: '-1',
+    deinterlace: false,
+    snapshotFormat: 'png',
   },
   subtitles: {
     autoload: true,

@@ -17,6 +17,14 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 name = "visualplayer-installer"
 path = "src/main.rs"
 
+[features]
+default = []
+# Required for production builds: embeds the installer frontend and serves it
+# over Tauri's custom protocol. Without it the installer runs in *dev* mode and
+# loads the dev URL (http://localhost:1430), showing "localhost isn't
+# responding". Our manual `cargo build` must pass `--features custom-protocol`.
+custom-protocol = ["tauri/custom-protocol"]
+
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 

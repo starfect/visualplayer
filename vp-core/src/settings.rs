@@ -25,6 +25,10 @@ pub struct PlaybackSettings {
     pub max_volume: u16,
     pub autoplay_next: bool,
     pub pause_on_minimize: bool,
+    /// Loop the current file indefinitely.
+    pub loop_file: bool,
+    /// Default playback speed applied to newly opened media.
+    pub default_speed: f64,
 }
 
 impl Default for PlaybackSettings {
@@ -38,6 +42,30 @@ impl Default for PlaybackSettings {
             max_volume: 130,
             autoplay_next: true,
             pause_on_minimize: false,
+            loop_file: false,
+            default_speed: 1.0,
+        }
+    }
+}
+
+/// Video output defaults, applied to every newly opened file.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(default, rename_all = "camelCase")]
+pub struct VideoSettings {
+    /// `video-aspect-override`. `"-1"` keeps the source aspect ratio.
+    pub aspect_ratio: String,
+    /// Deinterlace interlaced sources on open.
+    pub deinterlace: bool,
+    /// `screenshot-format`: `png`, `jpg`, or `webp`.
+    pub snapshot_format: String,
+}
+
+impl Default for VideoSettings {
+    fn default() -> Self {
+        Self {
+            aspect_ratio: "-1".to_string(),
+            deinterlace: false,
+            snapshot_format: "png".to_string(),
         }
     }
 }
@@ -102,6 +130,7 @@ pub struct Settings {
     pub speed: f64,
     pub max_simultaneous: u32,
     pub playback: PlaybackSettings,
+    pub video: VideoSettings,
     pub subtitles: SubtitleSettings,
     pub gestures: GestureSettings,
     pub keybindings: Vec<Binding>,
@@ -117,6 +146,7 @@ impl Default for Settings {
             speed: 1.0,
             max_simultaneous: 4,
             playback: PlaybackSettings::default(),
+            video: VideoSettings::default(),
             subtitles: SubtitleSettings::default(),
             gestures: GestureSettings::default(),
             keybindings: Vec::new(),
@@ -134,6 +164,7 @@ impl Settings {
         s.playback.seek_step_long_seconds = s.playback.seek_step_long_seconds.clamp(5.0, 600.0);
         s.playback.volume_step = s.playback.volume_step.clamp(1, 50);
         s.playback.max_volume = s.playback.max_volume.clamp(100, 300);
+        s.playback.default_speed = s.playback.default_speed.clamp(0.25, 4.0);
         s.subtitles.font_size = s.subtitles.font_size.clamp(8, 200);
         s.subtitles.position = s.subtitles.position.min(150);
         s.gestures.seek_sensitivity = s.gestures.seek_sensitivity.clamp(0.25, 4.0);
@@ -172,6 +203,10 @@ mod tests {
         assert_eq!(s.volume, 100);
         assert_eq!(s.effective_language(None), "en");
         assert!(s.playback.remember_position);
+        assert!(!s.playback.loop_file);
+        assert_eq!(s.playback.default_speed, 1.0);
+        assert_eq!(s.video.aspect_ratio, "-1");
+        assert_eq!(s.video.snapshot_format, "png");
         assert!(s.subtitles.autoload);
         assert!(s.gestures.enabled);
     }
@@ -203,5 +238,8 @@ mod tests {
         let s: Settings = serde_json::from_str(r#"{"language":"en"}"#).unwrap();
         assert_eq!(s.volume, 100);
         assert!(s.playback.hardware_decoding);
+        // Newly added groups/fields fall back to their defaults.
+        assert_eq!(s.video.snapshot_format, "png");
+        assert_eq!(s.playback.default_speed, 1.0);
     }
 }

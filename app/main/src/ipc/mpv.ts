@@ -146,6 +146,10 @@ export const mpv = {
   setSubtitlePos: (pos: number) => prop('sub-pos', pos),
   setSubtitleColor: (color: string) => prop('sub-color', color),
   setSubtitleFontSize: (size: number) => prop('sub-font-size', size),
+  setSubtitleBorderSize: (size: number) => prop('sub-border-size', size),
+  setSubtitleBold: (on: boolean) => prop('sub-bold', on),
+
+  setSnapshotFormat: (fmt: string) => prop('screenshot-format', fmt),
 
   setAbLoopA: (t: number | 'no') => prop('ab-loop-a', t),
   setAbLoopB: (t: number | 'no') => prop('ab-loop-b', t),

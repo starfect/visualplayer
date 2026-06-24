@@ -139,8 +139,13 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Build frontend
+      - name: Build app frontend
         working-directory: app/main
+        run: |
+          npm install
+          npm run build
+      - name: Build installer frontend
+        working-directory: installer
         run: |
           npm install
           npm run build
@@ -148,8 +153,11 @@ jobs:
         run: |
           cargo generate-lockfile
           cargo update -p time --precise 0.3.49
+      # `custom-protocol` is required for a production build; without it the exe
+      # runs in dev mode and loads http://localhost (the Tauri CLI sets it
+      # automatically, but these are plain `cargo build` invocations).
       - name: Build app executable
-        run: cargo build --release --features torrent -p visualplayer
+        run: cargo build --release --features "torrent,custom-protocol" -p visualplayer
       - name: Assemble installer payload
         shell: pwsh
         run: |
@@ -157,7 +165,7 @@ jobs:
           Copy-Item target/release/visualplayer.exe installer/src-tauri/payload/ -Force
           Get-ChildItem target/release -Filter *.dll -ErrorAction SilentlyContinue | Copy-Item -Destination installer/src-tauri/payload/ -Force
       - name: Build custom installer (single exe, no NSIS)
-        run: cargo build --release -p visualplayer-installer
+        run: cargo build --release --features custom-protocol -p visualplayer-installer
       - name: Stage installer asset
         shell: pwsh
         run: |

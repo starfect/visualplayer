@@ -47,6 +47,12 @@ tauri-plugin-libmpv = "0.3"
 
 [features]
 default = []
+# Production builds must embed the frontend and serve it over Tauri's custom
+# protocol. Without this feature the binary runs in *dev* mode and tries to load
+# the dev URL (http://localhost:1420) — a blank "localhost isn't responding"
+# window. `tauri build` enables it automatically; our manual `cargo build` on
+# Windows must opt in explicitly via `--features custom-protocol`.
+custom-protocol = ["tauri/custom-protocol"]
 torrent = ["dep:librqbit"]
 whisper = ["dep:whisper-rs", "dep:ureq"]
 convert = []

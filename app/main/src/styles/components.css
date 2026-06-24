@@ -508,8 +508,51 @@ input[type='range']::-moz-range-thumb {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   font-size: 14px;
   cursor: pointer;
+}
+.settings-toggle-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.settings-hint {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+}
+.settings-field .settings-hint {
+  margin-top: -2px;
+}
+.settings-field .tool-row {
+  gap: 12px;
+}
+.settings-field .tool-row input[type='range'] {
+  flex: 1;
+}
+.range-value {
+  min-width: 48px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--muted);
+}
+.settings-color {
+  width: 100%;
+  height: 34px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  cursor: pointer;
+}
+.settings-color::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.settings-color::-webkit-color-swatch {
+  border: none;
+  border-radius: 7px;
 }
 .shortcuts-list {
   display: flex;
